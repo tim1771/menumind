@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(which netlify:*)",
+      "Bash(cd \"C:/Users/Tuf Gamer/Desktop/claudestuff/menumind\" && node -e \"try { require\\('./netlify/functions/analyze-menu.js'\\); console.log\\('OK - no syntax errors'\\); } catch\\(e\\) { console.log\\('ERROR:', e.message\\); }\")"
+    ]
+  }
+}

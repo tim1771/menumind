@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MenuMind - AI Menu Engineering for Restaurants</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #242836;
+      --border: #2e3345;
+      --text: #e8eaed;
+      --text-dim: #9aa0b0;
+      --accent: #f59e0b;
+      --accent-hover: #d97706;
+      --green: #22c55e;
+      --green-bg: rgba(34,197,94,0.12);
+      --red: #ef4444;
+      --red-bg: rgba(239,68,68,0.12);
+      --yellow: #eab308;
+      --yellow-bg: rgba(234,179,8,0.12);
+      --blue: #3b82f6;
+      --blue-bg: rgba(59,130,246,0.12);
+      --purple: #a855f7;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(145deg, #0f1117 0%, #111827 30%, #0f1729 60%, #0c1a2e 100%);
+      background-attachment: fixed;
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 32px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .logo img {
+      height: 28px;
+      width: auto;
+    }
+    .logo .brand { color: var(--text); }
+    .logo .brand span { color: var(--accent); }
+    .logo .by {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-dim);
+      letter-spacing: 0;
+    }
+    nav a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 80px 24px 48px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .hero h1 {
+      font-size: 44px;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      color: var(--text-dim);
+      font-size: 18px;
+      max-width: 540px;
+      margin: 0 auto 32px;
+    }
+    .hero-cta {
+      display: inline-block;
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      font-size: 16px;
+      padding: 14px 36px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .hero-cta:hover { background: var(--accent-hover); }
+
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin-top: 48px;
+      flex-wrap: wrap;
+    }
+    .stat { text-align: center; }
+    .stat-num { font-size: 28px; font-weight: 800; color: var(--accent); }
+    .stat-label { font-size: 13px; color: var(--text-dim); }
+
+    /* MAIN CONTAINER */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 24px 80px;
+    }
+
+    /* STEPS */
+    .step-section {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .step-section.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .section-sub {
+      color: var(--text-dim);
+      font-size: 15px;
+      margin-bottom: 28px;
+    }
+
+    /* STEP INDICATOR */
+    .steps-indicator {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 40px;
+      padding-top: 40px;
+    }
+    .step-dot {
+      width: 40px;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--border);
+      transition: background 0.3s;
+    }
+    .step-dot.active { background: var(--accent); }
+    .step-dot.done { background: var(--green); }
+
+    /* UPLOAD AREA */
+    .upload-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 24px;
+      border-bottom: 2px solid var(--border);
+    }
+    .upload-tab {
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-dim);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+    }
+    .upload-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .drop-zone {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 48px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      background: var(--surface);
+    }
+    .drop-zone:hover, .drop-zone.dragover {
+      border-color: var(--accent);
+      background: rgba(245,158,11,0.04);
+    }
+    .drop-zone svg { margin-bottom: 12px; opacity: 0.5; }
+    .drop-zone p { color: var(--text-dim); font-size: 15px; }
+    .drop-zone .browse { color: var(--accent); font-weight: 600; cursor: pointer; }
+
+    .preview-img {
+      max-width: 100%;
+      max-height: 320px;
+      border-radius: 8px;
+      margin-top: 16px;
+      display: none;
+    }
+
+    .preview-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .preview-thumb {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .preview-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .preview-thumb .remove-thumb {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 22px;
+      height: 22px;
+      background: rgba(0,0,0,0.7);
+      color: var(--red);
+      border: none;
+      border-radius: 50%;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .preview-thumb .page-num {
+      position: absolute;
+      bottom: 4px;
+      left: 4px;
+      background: rgba(0,0,0,0.7);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .text-input-area {
+      display: none;
+    }
+    .text-input-area textarea {
+      width: 100%;
+      min-height: 220px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 16px;
+      font-size: 14px;
+      font-family: inherit;
+      resize: vertical;
+    }
+    .text-input-area textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .text-input-area textarea::placeholder { color: var(--text-dim); }
+
+    /* FORM */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .form-group input,
+    .form-group select {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-size: 15px;
+      font-family: inherit;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .form-group select { cursor: pointer; }
+    .form-group select option { background: var(--surface2); }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+    }
+    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .btn-secondary {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { border-color: var(--text-dim); }
+
+    .btn-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 28px;
+    }
+
+    /* EXTRACTED ITEMS TABLE */
+    .items-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: var(--surface);
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .items-table th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-dim);
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+    }
+    .items-table td {
+      padding: 10px 16px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .items-table tr:last-child td { border-bottom: none; }
+    .items-table .cat-label {
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .items-table .price { font-weight: 600; font-variant-numeric: tabular-nums; }
+    .items-table .remove-btn {
+      background: none;
+      border: none;
+      color: var(--red);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px;
+      opacity: 0.6;
+    }
+    .items-table .remove-btn:hover { opacity: 1; }
+
+    /* LOADING */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15,17,23,0.85);
+      backdrop-filter: blur(4px);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .loading-overlay.active { display: flex; }
+    .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { color: var(--text-dim); font-size: 16px; }
+
+    /* RESULTS */
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .score-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 20px;
+    }
+    .score-num {
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .score-label { font-size: 13px; color: var(--text-dim); }
+    .score-10 { font-size: 14px; color: var(--text-dim); font-weight: 400; }
+
+    .summary-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 28px;
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-dim);
+    }
+    .summary-card strong { color: var(--text); }
+
+    /* MATRIX */
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .matrix-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid var(--border);
+    }
+    .matrix-card h3 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .matrix-card .count {
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .matrix-card p {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+    }
+    .matrix-card .item-list {
+      font-size: 13px;
+      color: var(--text);
+    }
+    .matrix-card .item-list span {
+      display: inline-block;
+      background: var(--surface2);
+      padding: 3px 10px;
+      border-radius: 6px;
+      margin: 2px 4px 2px 0;
+      font-size: 12px;
+    }
+    .card-star { border-color: #22c55e40; }
+    .card-star h3 { color: var(--green); }
+    .card-star .count { background: var(--green-bg); color: var(--green); }
+    .card-plow { border-color: #3b82f640; }
+    .card-plow h3 { color: var(--blue); }
+    .card-plow .count { background: var(--blue-bg); color: var(--blue); }
+    .card-puzzle { border-color: #eab30840; }
+    .card-puzzle h3 { color: var(--yellow); }
+    .card-puzzle .count { background: var(--yellow-bg); color: var(--yellow); }
+    .card-dog { border-color: #ef444440; }
+    .card-dog h3 { color: var(--red); }
+    .card-dog .count { background: var(--red-bg); color: var(--red); }
+
+    /* ITEM CARDS */
+    .item-audit-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .item-audit-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .item-audit-name {
+      font-size: 17px;
+      font-weight: 700;
+    }
+    .class-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-Star { background: var(--green-bg); color: var(--green); }
+    .badge-Plowhorse { background: var(--blue-bg); color: var(--blue); }
+    .badge-Puzzle { background: var(--yellow-bg); color: var(--yellow); }
+    .badge-Dog { background: var(--red-bg); color: var(--red); }
+
+    .price-row {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .price-box {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+    .price-box strong {
+      display: block;
+      font-size: 18px;
+      color: var(--text);
+      font-weight: 700;
+    }
+    .price-change {
+      font-size: 13px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      align-self: center;
+    }
+    .price-up { background: var(--green-bg); color: var(--green); }
+    .price-down { background: var(--red-bg); color: var(--red); }
+    .price-same { background: var(--surface2); color: var(--text-dim); }
+
+    .desc-compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .desc-box {
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .desc-old {
+      background: var(--surface2);
+      color: var(--text-dim);
+    }
+    .desc-new {
+      background: rgba(245,158,11,0.08);
+      color: var(--text);
+      border: 1px solid rgba(245,158,11,0.2);
+    }
+    .desc-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-dim);
+      margin-bottom: 4px;
+    }
+    .desc-new .desc-label { color: var(--accent); }
+
+    .upsell-tag {
+      display: inline-block;
+      background: var(--purple);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 6px;
+    }
+    .item-note {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-top: 8px;
+      font-style: italic;
+    }
+
+    /* INSIGHTS SECTION */
+    .insights-section { margin-top: 32px; }
+    .insights-section h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .insight-columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+    .insight-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .insight-card h3 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--accent);
+    }
+    .insight-card ul {
+      list-style: none;
+      padding: 0;
+    }
+    .insight-card li {
+      font-size: 13px;
+      color: var(--text-dim);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+      line-height: 1.5;
+    }
+    .insight-card li:last-child { border-bottom: none; }
+
+    .impact-banner {
+      background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.04));
+      border: 1px solid rgba(245,158,11,0.3);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      margin-top: 32px;
+    }
+    .impact-banner .impact-num {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .impact-banner .impact-label {
+      font-size: 14px;
+      color: var(--text-dim);
+    }
+
+    /* DESIGN TIPS */
+    .design-tips-section { margin-top: 32px; }
+    .design-tips-section h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .design-tips-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .design-tip-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .design-tip-card h3 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--accent);
+    }
+    .design-tip-card p {
+      font-size: 13px;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }
+
+    /* TABLE SCROLL WRAPPER */
+    .table-scroll-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .table-scroll-wrap .items-table {
+      border: none;
+      min-width: 500px;
+    }
+
+    /* EMAIL CAPTURE */
+    .email-capture-box {
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .email-capture-box .skip-link {
+      color: var(--text-dim);
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: underline;
+      background: none;
+      border: none;
+      font-family: inherit;
+    }
+    .email-capture-box .skip-link:hover { color: var(--text); }
+    .saved-reports-list {
+      margin-top: 32px;
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+    }
+    .saved-reports-list h3 {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+    }
+    .report-link {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      color: var(--text);
+      font-size: 14px;
+      text-decoration: none;
+    }
+    .report-link:hover { border-color: var(--accent); }
+    .report-link .report-date { color: var(--text-dim); font-size: 12px; }
+
+    /* RESPONSIVE */
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 30px; }
+      .hero { padding: 48px 16px 32px; }
+      .hero p { font-size: 16px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .matrix-grid { grid-template-columns: 1fr; }
+      .desc-compare { grid-template-columns: 1fr; }
+      .insight-columns { grid-template-columns: 1fr; }
+      .design-tips-grid { grid-template-columns: 1fr; }
+      .stats-row { gap: 24px; }
+      nav { padding: 12px 16px; }
+      .container { padding: 0 16px 60px; }
+      .preview-thumb { width: 80px; height: 80px; }
+      .price-row { gap: 12px; }
+      .price-box strong { font-size: 16px; }
+      .price-change { align-self: flex-start; }
+      .results-header { flex-direction: column; align-items: flex-start; }
+      .score-badge { width: 100%; justify-content: center; }
+      .item-audit-card { padding: 16px; }
+      .insight-columns { gap: 12px; }
+      .btn { padding: 14px 24px; font-size: 16px; min-height: 48px; }
+      .upload-tab { padding: 14px 20px; }
+      .hero-cta { padding: 16px 32px; width: 100%; }
+      .btn-row { flex-direction: column-reverse; gap: 12px; }
+      .btn-row .btn { width: 100%; justify-content: center; }
+      .remove-btn { padding: 8px; font-size: 20px; }
+      .section-title { font-size: 20px; }
+      .item-audit-name { font-size: 15px; }
+    }
+
+    /* PRINT / PDF */
+    @media print {
+      body {
+        background: #fff !important;
+        color: #111 !important;
+      }
+      nav, .hero, .steps-indicator, .error-msg, .btn-row,
+      .loading-overlay, .drop-zone, .upload-tabs, #photoUpload, #textUpload {
+        display: none !important;
+      }
+      #appContainer { display: block !important; }
+      #step5 { display: block !important; }
+      .step-section { display: none !important; }
+      #step5 { display: block !important; }
+
+      .summary-card, .matrix-card, .item-audit-card, .insight-card, .impact-banner {
+        background: #f8f9fa !important;
+        border-color: #ddd !important;
+        color: #222 !important;
+        break-inside: avoid;
+      }
+      .section-title, .item-audit-name, h2 { color: #111 !important; }
+      .section-sub, .score-label, .score-10, .desc-label,
+      .item-note, .insight-card li, .impact-banner .impact-label { color: #555 !important; }
+      .matrix-card p, .summary-card { color: #444 !important; }
+      .score-badge { background: #f0f0f0 !important; border-color: #ddd !important; }
+      .desc-box { background: #f0f0f0 !important; color: #222 !important; }
+      .desc-new { background: #fffbeb !important; border-color: #f59e0b !important; }
+      .results-header { margin-top: 0; }
+      .container { max-width: 100%; padding: 0 20px; }
+
+      .print-header {
+        display: flex !important;
+        align-items: center;
+        gap: 12px;
+        padding-bottom: 16px;
+        margin-bottom: 24px;
+        border-bottom: 2px solid #e5e7eb;
+      }
+      .print-header img { height: 28px; }
+      .print-header span { font-size: 22px; font-weight: 800; color: #111; }
+      .print-header .accent { color: #d97706; }
+    }
+
+    .print-header { display: none; }
+
+    /* ERROR */
+    .error-msg {
+      background: var(--red-bg);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: var(--red);
+      padding: 14px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 20px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo"><span class="brand">Menu<span>Mind</span></span> <span class="by">by</span> <img src="menuca.JPG" alt="menuottawa.com"></div>
+  <a href="#" onclick="resetApp()">Start Over</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="heroSection">
+  <h1>Get a <span>$5,000 menu audit</span> for your restaurant in 60 seconds</h1>
+  <p>Upload your menu, get AI-powered pricing recommendations, item classifications, and rewritten descriptions that sell.</p>
+  <button class="hero-cta" onclick="startAudit()">Audit My Menu Free</button>
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-num">98K+</div>
+      <div class="stat-label">Independent restaurants in Canada</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">23%</div>
+      <div class="stat-label">Average revenue lift from menu engineering</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">60s</div>
+      <div class="stat-label">From upload to full audit</div>
+    </div>
+  </div>
+</section>
+
+<!-- APP STEPS -->
+<div class="container" id="appContainer" style="display:none;">
+
+  <div class="steps-indicator">
+    <div class="step-dot" id="dot1"></div>
+    <div class="step-dot" id="dot2"></div>
+    <div class="step-dot" id="dot3"></div>
+    <div class="step-dot" id="dot4"></div>
+    <div class="step-dot" id="dot5"></div>
+  </div>
+
+  <div class="error-msg" id="errorMsg"></div>
+
+  <!-- STEP 1: Upload Menu -->
+  <div class="step-section" id="step1">
+    <h2 class="section-title">Upload Your Menu</h2>
+    <p class="section-sub">Upload photos of your menu pages (one or more) or paste the items as text.</p>
+
+    <div class="upload-tabs">
+      <button class="upload-tab active" onclick="switchUploadTab('photo')">Photo Upload</button>
+      <button class="upload-tab" onclick="switchUploadTab('text')">Paste Text</button>
+    </div>
+
+    <div id="photoUpload">
+      <div class="drop-zone" id="dropZone">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        <p>Drag & drop your menu photos here, or <span class="browse">browse</span></p>
+        <p style="font-size:12px;margin-top:8px;opacity:0.5;">JPG, PNG, WebP — max 10MB each. Upload multiple pages.</p>
+        <input type="file" id="fileInput" accept="image/*" multiple style="display:none;">
+      </div>
+      <div class="preview-grid" id="previewGrid"></div>
+    </div>
+
+    <div class="text-input-area" id="textUpload">
+      <textarea id="menuTextInput" placeholder="Paste your menu here, e.g.:
+
+APPETIZERS
+Mozzarella Sticks - $8.99
+Crispy breaded mozzarella served with marinara
+
+Wings (10pc) - $12.99
+Tossed in your choice of sauce
+
+ENTREES
+Grilled Salmon - $22.99
+Atlantic salmon with lemon butter sauce
+
+Ribeye Steak - $28.99
+12oz USDA Choice, served with mashed potatoes"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <div></div>
+      <button class="btn btn-primary" onclick="extractMenu()">Extract Menu Items</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: Review Extracted Items -->
+  <div class="step-section" id="step2">
+    <h2 class="section-title">Review Extracted Items</h2>
+    <p class="section-sub">Verify the items we found. Remove any that don't belong.</p>
+
+    <div id="itemsTableContainer"></div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goToStep(1)">Back</button>
+      <button class="btn btn-primary" onclick="goToStep(3)">Looks Good, Continue</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Restaurant Details -->
+  <div class="step-section" id="step3">
+    <h2 class="section-title">Tell Us About Your Restaurant</h2>
+    <p class="section-sub">This helps us benchmark pricing and tailor recommendations.</p>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Cuisine Type</label>
+        <select id="cuisineType">
+          <option value="">Select cuisine...</option>
+          <option value="American">American</option>
+          <option value="Italian">Italian</option>
+          <option value="Mexican">Mexican</option>
+          <option value="Chinese">Chinese</option>
+          <option value="Japanese">Japanese / Sushi</option>
+          <option value="Thai">Thai</option>
+          <option value="Indian">Indian</option>
+          <option value="Mediterranean">Mediterranean</option>
+          <option value="French">French</option>
+          <option value="BBQ">BBQ</option>
+          <option value="Seafood">Seafood</option>
+          <option value="Pizza">Pizza</option>
+          <option value="Burger">Burger / Fast Casual</option>
+          <option value="Cafe">Cafe / Bakery</option>
+          <option value="Diner">Diner / Comfort Food</option>
+          <option value="Vegan">Vegan / Vegetarian</option>
+          <option value="Fusion">Fusion</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>ZIP / Postal Code</label>
+        <input type="text" id="zipCode" placeholder="e.g. 90210 or K1A 0B1" maxlength="10">
+      </div>
+      <div class="form-group">
+        <label>Monthly Customers (approx.)</label>
+        <input type="number" id="monthlyCovers" placeholder="e.g. 3000" min="0">
+      </div>
+      <div class="form-group">
+        <label>Target Food Cost %</label>
+        <select id="foodCostTarget">
+          <option value="25">25% (Fast casual)</option>
+          <option value="28">28% (Casual dining)</option>
+          <option value="30" selected>30% (Standard)</option>
+          <option value="32">32% (Full service)</option>
+          <option value="35">35% (Premium / Sushi)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goToStep(2)">Back</button>
+      <button class="btn btn-primary" onclick="runAnalysis()">Generate My Audit</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: Email Capture -->
+  <div class="step-section" id="step4">
+    <h2 class="section-title">Save Your Report</h2>
+    <p class="section-sub">Enter your email to save your audit and access it anytime.</p>
+
+    <div class="email-capture-box">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Email Address</label>
+          <input type="email" id="reportEmail" placeholder="you@restaurant.com">
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="skip-link" onclick="skipEmail()">Skip for now</button>
+        <button class="btn btn-primary" onclick="saveAndContinue()">Save & View Report</button>
+      </div>
+
+      <div id="savedReportsArea"></div>
+    </div>
+  </div>
+
+  <!-- STEP 5: Results -->
+  <div class="step-section" id="step5">
+    <div class="print-header">
+      <span>Menu<span class="accent">Mind</span> Audit Report</span>
+    </div>
+    <div id="resultsContainer"></div>
+    <div class="btn-row" style="margin-top: 40px;">
+      <button class="btn btn-secondary" onclick="resetApp()">Start New Audit</button>
+      <button class="btn btn-primary" onclick="exportPDF()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        Export PDF
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Extracting menu items...</div>
+</div>
+
+<script>
+  let extractedItems = [];
+  let uploadedImages = []; // array of base64 strings
+  let lastAuditResult = null;
+
+  function startAudit() {
+    document.getElementById('heroSection').style.display = 'none';
+    document.getElementById('appContainer').style.display = 'block';
+    goToStep(1);
+  }
+
+  function resetApp() {
+    extractedItems = [];
+    uploadedImages = [];
+    lastAuditResult = null;
+    document.getElementById('heroSection').style.display = 'block';
+    document.getElementById('appContainer').style.display = 'none';
+    document.getElementById('previewGrid').innerHTML = '';
+    document.getElementById('menuTextInput').value = '';
+    document.getElementById('fileInput').value = '';
+    document.getElementById('errorMsg').style.display = 'none';
+    document.getElementById('resultsContainer').innerHTML = '';
+    document.getElementById('reportEmail').value = '';
+    document.getElementById('savedReportsArea').innerHTML = '';
+  }
+
+  function goToStep(n) {
+    document.querySelectorAll('.step-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('step' + n).classList.add('active');
+    document.querySelectorAll('.step-dot').forEach((d, i) => {
+      d.className = 'step-dot';
+      if (i < n - 1) d.classList.add('done');
+      if (i === n - 1) d.classList.add('active');
+    });
+    document.getElementById('errorMsg').style.display = 'none';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Upload tabs
+  function switchUploadTab(tab) {
+    document.querySelectorAll('.upload-tab').forEach(t => t.classList.remove('active'));
+    if (tab === 'photo') {
+      document.querySelector('.upload-tab:first-child').classList.add('active');
+      document.getElementById('photoUpload').style.display = 'block';
+      document.getElementById('textUpload').style.display = 'none';
+    } else {
+      document.querySelector('.upload-tab:last-child').classList.add('active');
+      document.getElementById('photoUpload').style.display = 'none';
+      document.getElementById('textUpload').style.display = 'block';
+    }
+  }
+
+  // Drag & drop
+  const dropZone = document.getElementById('dropZone');
+  const fileInput = document.getElementById('fileInput');
+
+  dropZone.addEventListener('click', () => fileInput.click());
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const files = Array.from(e.dataTransfer.files);
+    files.forEach(f => handleFile(f));
+  });
+  fileInput.addEventListener('change', e => {
+    const files = Array.from(e.target.files);
+    files.forEach(f => handleFile(f));
+  });
+
+  function handleFile(file) {
+    if (!file.type.startsWith('image/')) {
+      showError('Please upload image files (JPG, PNG, WebP).');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      showError('File "' + file.name + '" is too large. Max 10MB per image.');
+      return;
+    }
+    if (uploadedImages.length >= 10) {
+      showError('Maximum 10 menu pages. Remove some to add more.');
+      return;
+    }
+    // Compress image to reduce payload size for the API
+    const reader = new FileReader();
+    reader.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const maxDim = 1600;
+        let w = img.width, h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) { h = Math.round(h * maxDim / w); w = maxDim; }
+          else { w = Math.round(w * maxDim / h); h = maxDim; }
+        }
+        canvas.width = w;
+        canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        const compressed = canvas.toDataURL('image/jpeg', 0.8);
+        uploadedImages.push(compressed);
+        renderPreviews();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeImage(index) {
+    uploadedImages.splice(index, 1);
+    renderPreviews();
+  }
+
+  function renderPreviews() {
+    const grid = document.getElementById('previewGrid');
+    if (!uploadedImages.length) {
+      grid.innerHTML = '';
+      return;
+    }
+    grid.innerHTML = uploadedImages.map((src, i) => `
+      <div class="preview-thumb">
+        <img src="${src}" alt="Page ${i + 1}">
+        <button class="remove-thumb" onclick="removeImage(${i})">&times;</button>
+        <span class="page-num">Page ${i + 1}</span>
+      </div>
+    `).join('');
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function showLoading(text) {
+    document.getElementById('loadingText').textContent = text;
+    document.getElementById('loadingOverlay').classList.add('active');
+  }
+
+  function hideLoading() {
+    document.getElementById('loadingOverlay').classList.remove('active');
+  }
+
+  // Extract menu — handles multiple images sequentially, merges results
+  async function extractMenu() {
+    const menuText = document.getElementById('menuTextInput').value.trim();
+
+    if (!uploadedImages.length && !menuText) {
+      showError('Please upload menu photos or paste your menu text.');
+      return;
+    }
+
+    showLoading('Extracting menu items...');
+
+    try {
+      extractedItems = [];
+
+      if (uploadedImages.length) {
+        // Process each image and merge items
+        for (let i = 0; i < uploadedImages.length; i++) {
+          showLoading(`Extracting page ${i + 1} of ${uploadedImages.length}...`);
+
+          const res = await fetch('/.netlify/functions/extract-menu', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image: uploadedImages[i] })
+          });
+
+          if (!res.ok) {
+            const err = await res.json();
+            throw new Error(`Page ${i + 1}: ${err.error || 'Extraction failed'}`);
+          }
+
+          const data = await res.json();
+          if (data.items && data.items.length) {
+            extractedItems.push(...data.items);
+          }
+        }
+      } else {
+        // Text mode — single request
+        const res = await fetch('/.netlify/functions/extract-menu', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ menuText })
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || 'Extraction failed');
+        }
+
+        const data = await res.json();
+        extractedItems = data.items || [];
+      }
+
+      if (!extractedItems.length) {
+        throw new Error('No menu items found. Try pasting text instead.');
+      }
+
+      renderItemsTable();
+      hideLoading();
+      goToStep(2);
+
+    } catch (err) {
+      hideLoading();
+      showError(err.message);
+    }
+  }
+
+  function renderItemsTable() {
+    let html = '<div class="table-scroll-wrap"><table class="items-table"><thead><tr><th>Item</th><th>Category</th><th>Price</th><th></th></tr></thead><tbody>';
+    extractedItems.forEach((item, i) => {
+      html += `<tr>
+        <td>
+          <strong>${esc(item.name)}</strong>
+          ${item.description ? `<br><span style="font-size:12px;color:var(--text-dim)">${esc(item.description)}</span>` : ''}
+        </td>
+        <td><span class="cat-label">${esc(item.category)}</span></td>
+        <td class="price">$${Number(item.price).toFixed(2)}</td>
+        <td><button class="remove-btn" onclick="removeItem(${i})" title="Remove">&times;</button></td>
+      </tr>`;
+    });
+    html += '</tbody></table></div>';
+    html += `<p style="margin-top:12px;font-size:13px;color:var(--text-dim)">${extractedItems.length} items extracted</p>`;
+    document.getElementById('itemsTableContainer').innerHTML = html;
+  }
+
+  function removeItem(index) {
+    extractedItems.splice(index, 1);
+    renderItemsTable();
+  }
+
+  // Run analysis
+  async function runAnalysis() {
+    showLoading('Analyzing your menu... This may take a minute for large menus.');
+
+    try {
+      const res = await fetch('/.netlify/functions/analyze-menu', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: extractedItems,
+          cuisineType: document.getElementById('cuisineType').value,
+          zipCode: document.getElementById('zipCode').value,
+          monthlyCovers: document.getElementById('monthlyCovers').value,
+          foodCostTarget: document.getElementById('foodCostTarget').value
+        })
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || 'Analysis failed');
+      }
+
+      const data = await res.json();
+      lastAuditResult = data;
+      hideLoading();
+      renderSavedReports();
+      goToStep(4);
+
+    } catch (err) {
+      hideLoading();
+      showError(err.message);
+    }
+  }
+
+  function renderResults(data) {
+    const c = document.getElementById('resultsContainer');
+    let scoreColor = data.overallScore >= 7 ? 'var(--green)' : data.overallScore >= 4 ? 'var(--yellow)' : 'var(--red)';
+
+    let html = `
+      <div class="results-header">
+        <div>
+          <h2 class="section-title">Your Menu Audit</h2>
+          <p class="section-sub">Here's what our AI menu engineer found.</p>
+        </div>
+        <div class="score-badge">
+          <div class="score-num" style="color:${scoreColor}">${data.overallScore || '?'}</div>
+          <div>
+            <div class="score-label">Menu Health Score</div>
+            <div class="score-10">out of 10</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-card">${esc(data.summary || '')}</div>
+    `;
+
+    // Matrix
+    const m = data.matrixSummary || {};
+    html += `<h2 style="font-size:20px;font-weight:700;margin-bottom:16px;">Menu Engineering Matrix</h2>`;
+    html += '<div class="matrix-grid">';
+    html += matrixCard('Stars', 'High profit, high popularity', m.stars, 'star', 'Promote these prominently');
+    html += matrixCard('Plowhorses', 'Low profit, high popularity', m.plowhorses, 'plow', 'Raise prices or reduce cost');
+    html += matrixCard('Puzzles', 'High profit, low popularity', m.puzzles, 'puzzle', 'Reposition and promote');
+    html += matrixCard('Dogs', 'Low profit, low popularity', m.dogs, 'dog', 'Consider removing');
+    html += '</div>';
+
+    // Item-by-item
+    html += '<h2 style="font-size:20px;font-weight:700;margin-bottom:16px;">Item-by-Item Analysis</h2>';
+    if (data.items && data.items.length) {
+      data.items.forEach(item => {
+        const cls = item.classification || 'Star';
+        const changeNum = parseFloat((item.priceChange || '0').replace(/[^0-9.\-]/g, ''));
+        const changeClass = changeNum > 0 ? 'price-up' : changeNum < 0 ? 'price-down' : 'price-same';
+
+        html += `
+          <div class="item-audit-card">
+            <div class="item-audit-header">
+              <div class="item-audit-name">${esc(item.name)}</div>
+              <span class="class-badge badge-${cls}">${cls}</span>
+            </div>
+            <div class="price-row">
+              <div class="price-box">
+                <span>Current</span>
+                <strong>$${Number(item.currentPrice || 0).toFixed(2)}</strong>
+              </div>
+              <div class="price-box">
+                <span>Recommended</span>
+                <strong>$${Number(item.recommendedPrice || 0).toFixed(2)}</strong>
+              </div>
+              <span class="price-change ${changeClass}">${esc(item.priceChange || 'No change')}</span>
+            </div>
+            <div class="desc-compare">
+              <div class="desc-box desc-old">
+                <div class="desc-label">Current Description</div>
+                ${esc(item.currentDescription || 'No description')}
+              </div>
+              <div class="desc-box desc-new">
+                <div class="desc-label">Suggested Rewrite</div>
+                ${esc(item.rewrittenDescription || '')}
+              </div>
+            </div>
+            ${item.upsellSuggestion ? `<span class="upsell-tag">Upsell: ${esc(item.upsellSuggestion)}</span>` : ''}
+            ${item.notes ? `<p class="item-note">${esc(item.notes)}</p>` : ''}
+          </div>
+        `;
+      });
+    }
+
+    // Design Tips
+    if (data.designTips) {
+      const tips = data.designTips;
+      const tipLabels = {
+        goldenTriangle: 'Eye Tracking & Golden Triangle',
+        boxing: 'Boxing & Framing',
+        fontAndColor: 'Font & Color Psychology',
+        menuLength: 'Optimal Menu Length',
+        pricePlacement: 'Price Display Strategy'
+      };
+      html += '<div class="design-tips-section"><h2>Menu Design Tips</h2><div class="design-tips-grid">';
+      for (const [key, label] of Object.entries(tipLabels)) {
+        if (tips[key]) {
+          html += `<div class="design-tip-card"><h3>${label}</h3><p>${esc(tips[key])}</p></div>`;
+        }
+      }
+      html += '</div></div>';
+    }
+
+    // Insights
+    html += '<div class="insights-section"><h2>Actionable Insights</h2><div class="insight-columns">';
+    html += insightCard('Quick Wins', data.quickWins);
+    html += insightCard('Pricing Insights', data.pricingInsights);
+    html += insightCard('Layout Recommendations', data.layoutRecommendations);
+    html += '</div></div>';
+
+    // Impact banner
+    if (data.estimatedMonthlyImpact) {
+      html += `
+        <div class="impact-banner">
+          <div class="impact-num">${esc(data.estimatedMonthlyImpact)}</div>
+          <div class="impact-label">Estimated additional monthly revenue if recommendations are implemented</div>
+        </div>
+      `;
+    }
+
+    c.innerHTML = html;
+  }
+
+  function matrixCard(title, subtitle, data, type, fallbackAdvice) {
+    const items = data?.items || [];
+    const count = data?.count || items.length;
+    const advice = data?.advice || fallbackAdvice;
+    return `
+      <div class="matrix-card card-${type}">
+        <h3>${title} <span class="count">${count}</span></h3>
+        <p>${advice}</p>
+        <div class="item-list">${items.map(i => `<span>${esc(i)}</span>`).join('')}</div>
+      </div>
+    `;
+  }
+
+  function insightCard(title, items) {
+    if (!items || !items.length) return '';
+    return `
+      <div class="insight-card">
+        <h3>${title}</h3>
+        <ul>${items.map(i => `<li>${esc(i)}</li>`).join('')}</ul>
+      </div>
+    `;
+  }
+
+  function exportPDF() {
+    window.print();
+  }
+
+  // Email capture + report saving
+  function saveAndContinue() {
+    const email = document.getElementById('reportEmail').value.trim();
+    if (email && !isValidEmail(email)) {
+      showError('Please enter a valid email address.');
+      return;
+    }
+    saveReport(email || null);
+    renderResults(lastAuditResult);
+    goToStep(5);
+  }
+
+  function skipEmail() {
+    saveReport(null);
+    renderResults(lastAuditResult);
+    goToStep(5);
+  }
+
+  function saveReport(email) {
+    const reportId = 'mm_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+    const report = {
+      id: reportId,
+      email: email,
+      createdAt: new Date().toISOString(),
+      restaurantInfo: {
+        cuisineType: document.getElementById('cuisineType').value,
+        zipCode: document.getElementById('zipCode').value,
+        monthlyCovers: document.getElementById('monthlyCovers').value,
+        foodCostTarget: document.getElementById('foodCostTarget').value
+      },
+      menuItems: extractedItems,
+      auditResult: lastAuditResult
+    };
+    const reports = JSON.parse(localStorage.getItem('menumind_reports') || '[]');
+    reports.unshift(report);
+    if (reports.length > 20) reports.length = 20;
+    localStorage.setItem('menumind_reports', JSON.stringify(reports));
+    return reportId;
+  }
+
+  function renderSavedReports() {
+    const reports = JSON.parse(localStorage.getItem('menumind_reports') || '[]');
+    const area = document.getElementById('savedReportsArea');
+    if (!reports.length) {
+      area.innerHTML = '';
+      return;
+    }
+    let html = '<div class="saved-reports-list"><h3>Previous Reports</h3>';
+    reports.slice(0, 5).forEach((r, i) => {
+      const date = new Date(r.createdAt).toLocaleDateString();
+      const cuisine = r.restaurantInfo?.cuisineType || 'Menu';
+      const score = r.auditResult?.overallScore || '?';
+      const items = r.menuItems?.length || 0;
+      html += `<div class="report-link" onclick="loadReport(${i})">
+        <span>${cuisine} audit — ${items} items — Score: ${score}/10</span>
+        <span class="report-date">${date}</span>
+      </div>`;
+    });
+    html += '</div>';
+    area.innerHTML = html;
+  }
+
+  function loadReport(index) {
+    const reports = JSON.parse(localStorage.getItem('menumind_reports') || '[]');
+    const report = reports[index];
+    if (!report) return;
+    lastAuditResult = report.auditResult;
+    extractedItems = report.menuItems || [];
+    renderResults(lastAuditResult);
+    goToStep(5);
+  }
+
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function esc(str) {
+    if (!str) return '';
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+</script>
+
+</body>
+</html>
