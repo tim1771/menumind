@@ -213,6 +213,27 @@
       font-size: 15px;
     }
 
+    .fixed-rate {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .fixed-rate-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .fixed-rate-value {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -0.3px;
+    }
+
     /* Results panel */
     .result-stack { display: flex; flex-direction: column; gap: 20px; }
 
@@ -465,10 +486,9 @@
       </div>
 
       <div class="field" style="margin-bottom: 0;">
-        <label for="directRate">Our commission on direct orders</label>
-        <div class="slider-row">
-          <input type="range" id="directRate" min="0" max="20" step="1" value="10" />
-          <span class="slider-val" id="directRateVal">10%</span>
+        <div class="fixed-rate">
+          <span class="fixed-rate-label">Our commission on direct orders</span>
+          <span class="fixed-rate-value">10%</span>
         </div>
       </div>
     </section>
@@ -534,13 +554,13 @@
 (function () {
   const $ = (id) => document.getElementById(id);
 
+  const DIRECT_RATE = 0.10;
+
   const els = {
     marketplaceRevenue: $('marketplaceRevenue'),
     commissionRate: $('commissionRate'),
     commissionRateVal: $('commissionRateVal'),
     directRevenue: $('directRevenue'),
-    directRate: $('directRate'),
-    directRateVal: $('directRateVal'),
     marketplaceCost: $('marketplaceCost'),
     marketplaceCostSub: $('marketplaceCostSub'),
     directCost: $('directCost'),
@@ -576,22 +596,18 @@
   function recalc() {
     const mpRev = num(els.marketplaceRevenue.value);
     const mpRate = num(els.commissionRate.value) / 100;
-    const dirRev = num(els.directRevenue.value);
-    const dirRate = num(els.directRate.value) / 100;
 
     els.commissionRateVal.textContent = Math.round(mpRate * 100) + '%';
-    els.directRateVal.textContent = Math.round(dirRate * 100) + '%';
 
     const mpCost = mpRev * mpRate;
-    // If those same orders moved to direct, the fee would be mpRev * dirRate
-    const dirEquivalentCost = mpRev * dirRate;
+    const dirEquivalentCost = mpRev * DIRECT_RATE;
     const monthlySavings = mpCost - dirEquivalentCost;
     const annualSavings = monthlySavings * 12;
 
     els.marketplaceCost.textContent = fmtMoney(mpCost);
     els.marketplaceCostSub.textContent = `at ${Math.round(mpRate * 100)}% on ${fmtMoney(mpRev)}/mo`;
     els.directCost.textContent = fmtMoney(dirEquivalentCost);
-    els.directCostSub.textContent = `at ${Math.round(dirRate * 100)}% on the same ${fmtMoney(mpRev)}/mo`;
+    els.directCostSub.textContent = `at ${Math.round(DIRECT_RATE * 100)}% on the same ${fmtMoney(mpRev)}/mo`;
     els.monthlySavings.textContent = fmtMoney(monthlySavings);
     els.annualSavings.textContent = fmtMoney(annualSavings);
     els.equivText.innerHTML = pickEquivalent(annualSavings);
@@ -603,7 +619,6 @@
       mp: 'marketplaceRevenue',
       cr: 'commissionRate',
       dr: 'directRevenue',
-      dc: 'directRate',
     };
     for (const [k, id] of Object.entries(map)) {
       const v = params.get(k);
@@ -618,7 +633,6 @@
       mp: num(els.marketplaceRevenue.value),
       cr: num(els.commissionRate.value),
       dr: num(els.directRevenue.value),
-      dc: num(els.directRate.value),
     });
     return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
   }
@@ -645,7 +659,7 @@
   }
 
   // Wire up
-  ['marketplaceRevenue', 'commissionRate', 'directRevenue', 'directRate'].forEach((id) => {
+  ['marketplaceRevenue', 'commissionRate', 'directRevenue'].forEach((id) => {
     els[id].addEventListener('input', recalc);
   });
   els.shareBtn.addEventListener('click', copyShareLink);
