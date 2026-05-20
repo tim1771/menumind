@@ -1,6 +1,7 @@
 [build]
   publish = "."
   functions = "netlify/functions"
+  command = "node scripts/build-blog.js"
 
 [functions]
   node_bundler = "esbuild"

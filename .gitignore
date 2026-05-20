@@ -8,3 +8,9 @@
 
 # Dependencies
 node_modules/
+
+# Blog source artifacts (markdown is the source of truth)
+blogposts.zip
+
+# Generated blog HTML — regenerated on deploy by scripts/build-blog.js
+blog/*.html
