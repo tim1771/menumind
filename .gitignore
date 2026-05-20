@@ -14,3 +14,7 @@ blogposts.zip
 
 # Generated blog HTML — regenerated on deploy by scripts/build-blog.js
 blog/*.html
+fr/blog/*.html
+
+# Generated city landing pages — regenerated on deploy by scripts/build-cities.js
+audit/*.html

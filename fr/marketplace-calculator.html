@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Direct vs. Marketplace Calculator — MenuMind</title>
-  <meta name="description" content="See exactly how much you lose to Uber Eats, DoorDash, and Skip every month — and what you'd keep with direct ordering." />
+  <title>Calculateur Direct vs Plateformes — MenuMind</title>
+  <meta name="description" content="Voyez exactement combien vous perdez chaque mois avec Uber Eats, DoorDash et Skip — et ce que vous garderiez avec la commande directe." />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23dc2626'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-weight='800' font-size='20' fill='white'%3EM%3C/text%3E%3C/svg%3E" />
 
-  <meta property="og:title" content="Direct vs. Marketplace Calculator — MenuMind" />
-  <meta property="og:description" content="See exactly how much you lose to third-party marketplaces every month." />
+  <meta property="og:title" content="Calculateur Direct vs Plateformes — MenuMind" />
+  <meta property="og:description" content="Voyez exactement combien vous perdez chaque mois avec les plateformes tierces." />
   <meta property="og:type" content="website" />
+  <meta property="og:locale" content="fr_CA" />
 
   <!-- hreflang -->
   <link rel="alternate" hreflang="en-CA" href="/marketplace-calculator.html" />
@@ -439,26 +440,26 @@
 <body>
 
 <nav>
-  <a href="/" class="logo">
+  <a href="/fr/" class="logo">
     <span class="brand">Menu<span>Mind</span></span>
-    <span class="by">by</span>
-    <img src="menulogo.JPG" alt="menu.ca">
+    <span class="by">par</span>
+    <img src="/menulogo.JPG" alt="menu.ca">
   </a>
   <div class="nav-links">
-    <a class="nav-link" href="/">Menu Audit</a>
-    <a class="nav-link" href="/blog/">Blog</a>
+    <a class="nav-link" href="/fr/">Audit de menu</a>
+    <a class="nav-link" href="/fr/blog/">Blogue</a>
     <span style="color: var(--text-dim); font-size: 13px;">
-      <strong style="color: var(--accent);">EN</strong>
+      <a class="nav-link" href="/marketplace-calculator.html" style="display:inline;">EN</a>
       <span style="opacity:0.4;"> | </span>
-      <a class="nav-link" href="/fr/marketplace-calculator.html" style="display:inline;">FR</a>
+      <strong style="color: var(--accent);">FR</strong>
     </span>
   </div>
 </nav>
 
 <header class="page-header">
-  <div class="page-badge">Free Calculator</div>
-  <h1>How much are marketplaces <span>actually costing you?</span></h1>
-  <p>Plug in your numbers. See exactly what you lose to Uber Eats, DoorDash, and Skip every month — and what you'd keep with direct ordering.</p>
+  <div class="page-badge">Calculateur gratuit</div>
+  <h1>Combien les plateformes <span>vous coûtent-elles vraiment?</span></h1>
+  <p>Entrez vos chiffres. Voyez exactement ce que vous perdez chaque mois avec Uber Eats, DoorDash et Skip — et ce que vous garderiez avec la commande directe.</p>
 </header>
 
 <div class="container">
@@ -466,12 +467,12 @@
 
     <!-- INPUTS -->
     <section class="card">
-      <h2>Your numbers</h2>
-      <p class="card-sub">Rough estimates are fine. Everything updates live.</p>
+      <h2>Vos chiffres</h2>
+      <p class="card-sub">Des estimations approximatives suffisent. Tout se met à jour en direct.</p>
 
       <div class="field">
-        <label for="marketplaceRevenue">Monthly revenue from third-party marketplaces</label>
-        <div class="hint">Combined total across Uber Eats, DoorDash, Skip, etc.</div>
+        <label for="marketplaceRevenue">Revenus mensuels provenant des plateformes tierces</label>
+        <div class="hint">Total combiné d'Uber Eats, DoorDash, Skip, etc.</div>
         <div class="input-wrap has-prefix">
           <span class="prefix">$</span>
           <input type="number" id="marketplaceRevenue" min="0" step="100" placeholder="15000" value="15000" />
@@ -479,17 +480,17 @@
       </div>
 
       <div class="field">
-        <label for="commissionRate">Marketplace commission rate</label>
-        <div class="hint">Typically 25–35% depending on platform and tier.</div>
+        <label for="commissionRate">Taux de commission des plateformes</label>
+        <div class="hint">Généralement de 25 à 35 % selon la plateforme et le forfait.</div>
         <div class="slider-row">
           <input type="range" id="commissionRate" min="10" max="40" step="1" value="30" />
-          <span class="slider-val" id="commissionRateVal">30%</span>
+          <span class="slider-val" id="commissionRateVal">30 %</span>
         </div>
       </div>
 
       <div class="field">
-        <label for="directRevenue">Monthly revenue from direct online orders <span style="color: var(--text-dim); font-weight: 400;">(optional)</span></label>
-        <div class="hint">Orders through your own website or branded ordering page.</div>
+        <label for="directRevenue">Revenus mensuels provenant des commandes en ligne directes <span style="color: var(--text-dim); font-weight: 400;">(facultatif)</span></label>
+        <div class="hint">Commandes passées via votre propre site web ou votre page de commande à votre nom.</div>
         <div class="input-wrap has-prefix">
           <span class="prefix">$</span>
           <input type="number" id="directRevenue" min="0" step="100" placeholder="0" value="0" />
@@ -498,8 +499,8 @@
 
       <div class="field" style="margin-bottom: 0;">
         <div class="fixed-rate">
-          <span class="fixed-rate-label">Our commission on direct orders</span>
-          <span class="fixed-rate-value">10%</span>
+          <span class="fixed-rate-label">Notre commission sur les commandes directes</span>
+          <span class="fixed-rate-value">10 %</span>
         </div>
       </div>
     </section>
@@ -507,57 +508,57 @@
     <!-- RESULTS -->
     <section class="card result-stack" aria-live="polite">
       <div>
-        <h2>What you keep — and what you lose</h2>
-        <p class="card-sub">Same orders. Different fee structure.</p>
+        <h2>Ce que vous gardez — et ce que vous perdez</h2>
+        <p class="card-sub">Mêmes commandes. Structure de frais différente.</p>
       </div>
 
       <div class="compare">
         <div class="compare-cell marketplace">
-          <div class="label">Marketplace fees / mo</div>
-          <div class="amount" id="marketplaceCost">$0</div>
-          <div class="sub" id="marketplaceCostSub">at 30% commission</div>
+          <div class="label">Frais des plateformes / mois</div>
+          <div class="amount" id="marketplaceCost">0 $</div>
+          <div class="sub" id="marketplaceCostSub">à 30 % de commission</div>
         </div>
         <div class="compare-cell direct">
-          <div class="label">Direct fees / mo</div>
-          <div class="amount" id="directCost">$0</div>
-          <div class="sub" id="directCostSub">at 10% commission</div>
+          <div class="label">Frais directs / mois</div>
+          <div class="amount" id="directCost">0 $</div>
+          <div class="sub" id="directCostSub">à 10 % de commission</div>
         </div>
       </div>
 
       <div class="savings-highlight">
-        <div class="label">You'd keep an extra</div>
-        <div class="big" id="monthlySavings">$0</div>
-        <div class="annual">That's <b id="annualSavings">$0</b> back in your pocket per year</div>
+        <div class="label">Vous garderiez en plus</div>
+        <div class="big" id="monthlySavings">0 $</div>
+        <div class="annual">Soit <b id="annualSavings">0 $</b> de plus dans vos poches par année</div>
       </div>
 
       <div class="equiv" id="equivBlock">
-        💡 <span id="equivText">Enter your numbers to see what that could mean for your business.</span>
+        💡 <span id="equivText">Entrez vos chiffres pour voir ce que cela pourrait représenter pour votre entreprise.</span>
       </div>
 
       <div class="action-row">
-        <button class="btn" id="shareBtn">Copy share link</button>
-        <span class="copy-toast" id="copyToast">Link copied ✓</span>
+        <button class="btn" id="shareBtn">Copier le lien à partager</button>
+        <span class="copy-toast" id="copyToast">Lien copié ✓</span>
       </div>
 
-      <p class="disclaimer">Actual savings depend on order volume and successful customer migration to direct ordering. This estimate assumes equivalent order volume on both channels.</p>
+      <p class="disclaimer">Les économies réelles dépendent du volume de commandes et de la migration effective des clients vers la commande directe. Cette estimation suppose un volume de commandes équivalent sur les deux canaux.</p>
     </section>
   </div>
 
   <!-- UPSELL -->
   <aside class="upsell-cta">
     <div class="upsell-text">
-      <div class="upsell-label">Next step</div>
-      <h3>Ready to shift customers to direct ordering?</h3>
-      <p>We help restaurants set up their branded ordering page and run migration campaigns to move customers off the marketplaces. Real-world savings, not just spreadsheet math.</p>
+      <div class="upsell-label">Prochaine étape</div>
+      <h3>Prêt à ramener vos clients vers la commande directe?</h3>
+      <p>On aide les restaurants à mettre en place leur page de commande à leur nom et à lancer des campagnes pour faire migrer leurs clients hors des plateformes. De vraies économies, pas juste des calculs sur Excel.</p>
     </div>
-    <a class="btn primary" href="mailto:tim@worklocal.ca?subject=Direct%20ordering%20setup%20-%20MenuMind%20calculator">Talk to our team</a>
+    <a class="btn primary" href="mailto:tim@worklocal.ca?subject=Configuration%20commande%20directe%20-%20calculateur%20MenuMind">Parler à notre équipe</a>
   </aside>
 </div>
 
 <footer class="landing-footer">
   <div class="footer-inner">
     <span class="footer-brand">Menu<span>Mind</span></span>
-    <span>by menu.ca</span>
+    <span>par menu.ca</span>
   </div>
 </footer>
 
@@ -587,7 +588,8 @@
     if (!isFinite(n)) n = 0;
     const sign = n < 0 ? '-' : '';
     const abs = Math.abs(Math.round(n));
-    return sign + '$' + abs.toLocaleString('en-US');
+    // French Canadian convention: amount followed by $, thousands separator is a non-breaking space
+    return sign + abs.toLocaleString('fr-CA').replace(/ /g, ' ') + ' $';
   };
 
   const num = (v) => {
@@ -596,19 +598,19 @@
   };
 
   function pickEquivalent(annual) {
-    if (annual <= 0) return 'Enter your numbers to see what that could mean for your business.';
-    if (annual < 3000) return `<b>${fmtMoney(annual)}/year</b> covers a year of restaurant insurance or a fresh menu reprint.`;
-    if (annual < 8000) return `<b>${fmtMoney(annual)}/year</b> covers a year of targeted local advertising — Facebook, Instagram, and Google ads aimed at your neighbourhood.`;
-    if (annual < 20000) return `<b>${fmtMoney(annual)}/year</b> is roughly the cost of a part-time staff member, or a full kitchen equipment upgrade.`;
-    if (annual < 50000) return `<b>${fmtMoney(annual)}/year</b> is a full-time hire — a second cook, a delivery driver, or a marketing manager.`;
-    return `<b>${fmtMoney(annual)}/year</b> is enough to open a second location, fund a full renovation, or hire two full-time staff.`;
+    if (annual <= 0) return 'Entrez vos chiffres pour voir ce que cela pourrait représenter pour votre entreprise.';
+    if (annual < 3000) return `<b>${fmtMoney(annual)}/an</b> couvre une année d'assurance pour restaurant ou une réimpression complète de votre menu.`;
+    if (annual < 8000) return `<b>${fmtMoney(annual)}/an</b> couvre une année de publicité locale ciblée — Facebook, Instagram et Google Ads pour votre quartier.`;
+    if (annual < 20000) return `<b>${fmtMoney(annual)}/an</b>, c'est environ le coût d'un employé à temps partiel ou une mise à niveau complète de votre équipement de cuisine.`;
+    if (annual < 50000) return `<b>${fmtMoney(annual)}/an</b>, c'est une embauche à temps plein — un deuxième cuisinier, un livreur ou un gestionnaire marketing.`;
+    return `<b>${fmtMoney(annual)}/an</b>, c'est assez pour ouvrir un deuxième établissement, financer une rénovation complète ou embaucher deux employés à temps plein.`;
   }
 
   function recalc() {
     const mpRev = num(els.marketplaceRevenue.value);
     const mpRate = num(els.commissionRate.value) / 100;
 
-    els.commissionRateVal.textContent = Math.round(mpRate * 100) + '%';
+    els.commissionRateVal.textContent = Math.round(mpRate * 100) + ' %';
 
     const mpCost = mpRev * mpRate;
     const dirEquivalentCost = mpRev * DIRECT_RATE;
@@ -616,9 +618,9 @@
     const annualSavings = monthlySavings * 12;
 
     els.marketplaceCost.textContent = fmtMoney(mpCost);
-    els.marketplaceCostSub.textContent = `at ${Math.round(mpRate * 100)}% on ${fmtMoney(mpRev)}/mo`;
+    els.marketplaceCostSub.textContent = `à ${Math.round(mpRate * 100)} % sur ${fmtMoney(mpRev)}/mois`;
     els.directCost.textContent = fmtMoney(dirEquivalentCost);
-    els.directCostSub.textContent = `at ${Math.round(DIRECT_RATE * 100)}% on the same ${fmtMoney(mpRev)}/mo`;
+    els.directCostSub.textContent = `à ${Math.round(DIRECT_RATE * 100)} % sur les mêmes ${fmtMoney(mpRev)}/mois`;
     els.monthlySavings.textContent = fmtMoney(monthlySavings);
     els.annualSavings.textContent = fmtMoney(annualSavings);
     els.equivText.innerHTML = pickEquivalent(annualSavings);

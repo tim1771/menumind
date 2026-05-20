@@ -1,7 +1,7 @@
 [build]
   publish = "."
   functions = "netlify/functions"
-  command = "node scripts/build-blog.js"
+  command = "node scripts/build-blog.js && node scripts/build-cities.js"
 
 [functions]
   node_bundler = "esbuild"
@@ -9,6 +9,10 @@
 
 [functions."analyze-menu"]
   timeout = 90
+
+# Daily drip sender — runs at 14:00 UTC (~10am ET, 7am PT).
+[functions."send-drip"]
+  schedule = "0 14 * * *"
 
 [[headers]]
   for = "/*"

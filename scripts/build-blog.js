@@ -1,74 +1,65 @@
 #!/usr/bin/env node
-// Generates static HTML pages for the MenuMind blog from markdown files in blog/posts/.
-// Vanilla Node, no external deps. Produces:
-//   - blog/index.html              (listing)
-//   - blog/<slug>.html             (one per post)
-//   - blog/_homepage-teaser.html   (snippet inlined into the homepage)
+// Generates static HTML pages for the MenuMind blog from markdown files
+// under blog/posts/ (and blog/posts/fr/ for French). Uses scripts/partials.js
+// for shared chrome.
 
 const fs = require('fs');
 const path = require('path');
+const {
+  SITE_URL,
+  BASE_CSS,
+  LABELS,
+  escapeHtml,
+  escapeAttr,
+  navHtml,
+  footerHtml,
+  ctaHtml,
+} = require('./partials');
 
 const ROOT = path.resolve(__dirname, '..');
-const POSTS_DIR = path.join(ROOT, 'blog', 'posts');
-const BLOG_DIR = path.join(ROOT, 'blog');
-const SITE_URL = 'https://menumindx.netlify.app';
+const POSTS_DIR_EN = path.join(ROOT, 'blog', 'posts');
+const POSTS_DIR_FR = path.join(ROOT, 'fr', 'blog', 'posts');
+const BLOG_DIR_EN = path.join(ROOT, 'blog');
+const BLOG_DIR_FR = path.join(ROOT, 'fr', 'blog');
 
-// Posts in newest-first order. Slug = filename without .md.
-// Dates space the posts roughly a week apart so ordering is stable.
+// Posts in newest-first order. Same slugs used for EN and FR.
+// To add a post: write blog/posts/<slug>.md, then add { slug, date } here.
 const ORDER = [
-  { slug: 'ai-social-media-restaurants',          date: '2026-05-20' },
-  { slug: 'ai-food-waste-inventory-restaurants',  date: '2026-05-13' },
-  { slug: 'ai-review-response-restaurants',       date: '2026-05-06' },
-  { slug: 'restaurant-staff-ai-adoption',         date: '2026-04-29' },
-  { slug: 'canadian-ai-privacy-restaurants',      date: '2026-04-22' },
+  { slug: 'ai-staff-scheduling-restaurants',       date: '2026-06-10' },
+  { slug: 'ai-catering-quotes-restaurants',        date: '2026-06-03' },
+  { slug: 'ai-menu-pricing-inflation-restaurants', date: '2026-05-27' },
+  { slug: 'ai-loyalty-program-restaurants',        date: '2026-05-23' },
+  { slug: 'ai-training-videos-restaurants',        date: '2026-05-21' },
+  { slug: 'ai-social-media-restaurants',           date: '2026-05-20' },
+  { slug: 'ai-food-waste-inventory-restaurants',   date: '2026-05-13' },
+  { slug: 'ai-review-response-restaurants',        date: '2026-05-06' },
+  { slug: 'restaurant-staff-ai-adoption',          date: '2026-04-29' },
+  { slug: 'canadian-ai-privacy-restaurants',       date: '2026-04-22' },
 ];
 
 // ── Markdown parser ───────────────────────────────────────────────────────
 // Supports: # h1, ## h2, **bold**, [text](url), blank-line paragraphs.
-// Anything fancier isn't used by these posts.
-
-function escapeHtml(s) {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-function escapeAttr(s) {
-  return escapeHtml(s);
-}
 
 function renderInline(text) {
-  // Escape HTML first, then re-introduce links and bold via placeholders.
   let out = escapeHtml(text);
-  // [text](url) → <a>
   out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) => {
     const isExternal = /^https?:\/\//i.test(url) && !url.includes('menumindx.netlify.app');
-    const attrs = isExternal
-      ? ` target="_blank" rel="noopener noreferrer"`
-      : '';
+    const attrs = isExternal ? ` target="_blank" rel="noopener noreferrer"` : '';
     return `<a href="${escapeAttr(url)}"${attrs}>${label}</a>`;
   });
-  // **bold**
   out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
   return out;
 }
 
 function renderMarkdownBody(md) {
-  // Split into blocks by blank lines.
   const blocks = md.split(/\n\s*\n/).map(b => b.trim()).filter(Boolean);
   const out = [];
   for (const block of blocks) {
     if (block.startsWith('## ')) {
       out.push(`<h2>${renderInline(block.slice(3).trim())}</h2>`);
     } else if (block.startsWith('# ')) {
-      // Shouldn't appear in body, but handle defensively.
       out.push(`<h2>${renderInline(block.slice(2).trim())}</h2>`);
     } else {
-      // Paragraph — preserve single line breaks as <br> only if the block has them;
-      // these posts don't use mid-paragraph breaks, so simple joining is fine.
       out.push(`<p>${renderInline(block.replace(/\n/g, ' '))}</p>`);
     }
   }
@@ -76,19 +67,17 @@ function renderMarkdownBody(md) {
 }
 
 // ── Frontmatter parser ────────────────────────────────────────────────────
-// Format: title is the first `# ...` line, then **Meta Description:** and
-// **Target Keywords:** lines, then `---`, then body, then `---`, then CTA.
-// We treat the markdown's trailing CTA as discarded — the rendered page
-// gets a styled BlogCTA card instead.
+// Format: title (`# ...`), then **Meta Description:** and **Target Keywords:**,
+// then `---`, then body until the next `---`. The trailing CTA in the markdown
+// is discarded — the rendered page gets a styled BlogCTA card instead.
 
-function parsePost(md) {
+function parsePost(md, lang) {
   const lines = md.split(/\r?\n/);
   let title = '';
   let metaDesc = '';
   let keywords = '';
   let i = 0;
 
-  // Title
   for (; i < lines.length; i++) {
     const line = lines[i].trim();
     if (line.startsWith('# ')) {
@@ -98,20 +87,18 @@ function parsePost(md) {
     }
   }
 
-  // Metadata lines and the first ---
   for (; i < lines.length; i++) {
     const line = lines[i].trim();
     if (line === '---') {
       i++;
       break;
     }
-    const md1 = line.match(/^\*\*Meta Description:\*\*\s*(.+)$/);
+    const md1 = line.match(/^\*\*(?:Meta Description|Méta description|Description méta)\:\*\*\s*(.+)$/i);
     if (md1) { metaDesc = md1[1].trim(); continue; }
-    const kw1 = line.match(/^\*\*Target Keywords?:\*\*\s*(.+)$/);
+    const kw1 = line.match(/^\*\*(?:Target Keywords?|Mots-clés cibles?|Mots-cl[ée]s)\:\*\*\s*(.+)$/i);
     if (kw1) { keywords = kw1[1].trim(); continue; }
   }
 
-  // Body until the next --- (or EOF).
   const bodyLines = [];
   for (; i < lines.length; i++) {
     if (lines[i].trim() === '---') break;
@@ -129,138 +116,22 @@ function readTime(body) {
 
 function excerpt(s, n) {
   if (s.length <= n) return s;
-  // Cut at the last word boundary before n.
   const cut = s.slice(0, n);
   const lastSpace = cut.lastIndexOf(' ');
   return (lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trim() + '…';
 }
 
-function fmtDate(iso) {
+function fmtDate(iso, lang) {
   const [y, m, d] = iso.split('-').map(Number);
+  if (lang === 'fr') {
+    const months = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+    return `${d} ${months[m - 1]} ${y}`;
+  }
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
   return `${months[m - 1]} ${d}, ${y}`;
 }
 
-// ── Shared CSS ────────────────────────────────────────────────────────────
-// Mirrors the dark-theme variables and aesthetic of index.html /
-// marketplace-calculator.html so the blog feels native.
-
-const SHARED_CSS = `
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  :root {
-    --bg: #0f1117;
-    --surface: #1a1d27;
-    --surface2: #242836;
-    --border: #2e3345;
-    --text: #e8eaed;
-    --text-dim: #9aa0b0;
-    --accent: #f59e0b;
-    --accent-hover: #d97706;
-    --red: #ef4444;
-  }
-
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: linear-gradient(145deg, #0f1117 0%, #111827 30%, #0f1729 60%, #0c1a2e 100%);
-    background-attachment: fixed;
-    color: var(--text);
-    line-height: 1.6;
-    min-height: 100vh;
-  }
-
-  a { color: var(--accent); }
-
-  nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 32px;
-    border-bottom: 1px solid rgba(245,158,11,0.1);
-    background: rgba(15,17,23,0.85);
-    backdrop-filter: blur(12px);
-    position: sticky;
-    top: 0;
-    z-index: 50;
-  }
-  .logo {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    text-decoration: none;
-  }
-  .logo img { height: 28px; width: auto; }
-  .logo .brand { color: var(--text); }
-  .logo .brand span { color: var(--accent); }
-  .logo .by { font-size: 11px; font-weight: 400; color: var(--text-dim); letter-spacing: 0; }
-  nav .nav-links { display: flex; gap: 24px; align-items: center; }
-  nav a.nav-link {
-    color: var(--text-dim);
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 500;
-    transition: color 0.2s;
-  }
-  nav a.nav-link:hover { color: var(--text); }
-
-  .landing-footer { border-top: 1px solid var(--border); padding: 20px 32px; margin-top: 80px; }
-  .footer-inner {
-    max-width: 1000px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 13px;
-    color: var(--text-dim);
-  }
-  .footer-brand { font-weight: 700; font-size: 15px; color: var(--text); }
-  .footer-brand span { color: var(--accent); }
-
-  /* CTA card — used on every post and as a banner on the listing */
-  .blog-cta {
-    background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.04));
-    border: 1px solid rgba(245,158,11,0.35);
-    border-radius: 14px;
-    padding: 32px;
-    text-align: center;
-    margin: 48px 0;
-  }
-  .blog-cta h3 {
-    font-size: clamp(20px, 3vw, 24px);
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 18px;
-    line-height: 1.3;
-  }
-  .blog-cta .cta-btn {
-    display: inline-block;
-    background: linear-gradient(110deg, #f59e0b 0%, #ef4444 100%);
-    color: #fff;
-    font-weight: 700;
-    font-size: 15px;
-    padding: 14px 32px;
-    border-radius: 10px;
-    border: 2px solid var(--accent);
-    text-decoration: none;
-    transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 0 18px rgba(245,158,11,0.4);
-  }
-  .blog-cta .cta-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 0 28px rgba(245,158,11,0.6);
-  }
-  .blog-cta .cta-secondary {
-    display: block;
-    margin-top: 16px;
-    font-size: 14px;
-    color: var(--text-dim);
-    text-decoration: none;
-  }
-  .blog-cta .cta-secondary:hover { color: var(--accent); }
-`;
+// ── Per-page CSS ──────────────────────────────────────────────────────────
 
 const LISTING_CSS = `
   .blog-hero {
@@ -295,24 +166,10 @@ const LISTING_CSS = `
     max-width: 560px;
     margin: 0 auto;
   }
-
-  .blog-grid-wrap {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 24px 80px;
-  }
-  .blog-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-  @media (min-width: 640px) {
-    .blog-grid { grid-template-columns: 1fr 1fr; }
-  }
-  @media (min-width: 960px) {
-    .blog-grid { grid-template-columns: 1fr 1fr 1fr; }
-  }
-
+  .blog-grid-wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
+  .blog-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+  @media (min-width: 640px) { .blog-grid { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 960px) { .blog-grid { grid-template-columns: 1fr 1fr 1fr; } }
   .post-card {
     background: rgba(255,255,255,0.02);
     border: 1px solid var(--border);
@@ -350,14 +207,9 @@ const LISTING_CSS = `
     margin-bottom: 16px;
     flex: 1;
   }
-  .post-card .read-more {
-    color: var(--accent);
-    font-weight: 600;
-    font-size: 14px;
-  }
-
+  .post-card .read-more { color: var(--accent); font-weight: 600; font-size: 14px; }
   @media (max-width: 640px) {
-    nav { padding: 12px 16px; }
+    nav.site-nav { padding: 12px 16px; }
     .blog-hero { padding: 48px 16px 32px; }
     .blog-grid-wrap { padding: 0 16px 60px; }
     .blog-cta { padding: 24px; margin: 32px 0; }
@@ -365,11 +217,7 @@ const LISTING_CSS = `
 `;
 
 const POST_CSS = `
-  .post-wrap {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 32px 24px 80px;
-  }
+  .post-wrap { max-width: 720px; margin: 0 auto; padding: 32px 24px 80px; }
   .back-link {
     display: inline-block;
     color: var(--text-dim);
@@ -379,7 +227,6 @@ const POST_CSS = `
     transition: color 0.2s;
   }
   .back-link:hover { color: var(--accent); }
-
   .post-header {
     margin-bottom: 40px;
     padding-bottom: 24px;
@@ -401,12 +248,7 @@ const POST_CSS = `
     flex-wrap: wrap;
   }
   .post-meta .dot { color: var(--border); }
-
-  .post-content {
-    font-size: 17px;
-    line-height: 1.75;
-    color: #d8dae0;
-  }
+  .post-content { font-size: 17px; line-height: 1.75; color: #d8dae0; }
   .post-content h2 {
     font-size: 22px;
     font-weight: 700;
@@ -424,7 +266,6 @@ const POST_CSS = `
     text-underline-offset: 3px;
   }
   .post-content a:hover { text-decoration-color: var(--accent); }
-
   .post-nav {
     margin-top: 48px;
     padding-top: 32px;
@@ -451,17 +292,11 @@ const POST_CSS = `
     letter-spacing: 0.5px;
     margin-bottom: 6px;
   }
-  .post-nav .title {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text);
-    line-height: 1.4;
-  }
+  .post-nav .title { font-size: 14px; font-weight: 600; color: var(--text); line-height: 1.4; }
   .post-nav .next { text-align: right; }
   .post-nav .empty { background: transparent; border: none; pointer-events: none; }
-
   @media (max-width: 640px) {
-    nav { padding: 12px 16px; }
+    nav.site-nav { padding: 12px 16px; }
     .post-wrap { padding: 24px 16px 60px; }
     .post-content { font-size: 16px; }
     .post-nav { grid-template-columns: 1fr; }
@@ -469,50 +304,19 @@ const POST_CSS = `
   }
 `;
 
-// ── Shared layout fragments ───────────────────────────────────────────────
+// ── Page builders ─────────────────────────────────────────────────────────
 
-function navHtml() {
-  return `
-<nav>
-  <a href="/" class="logo">
-    <span class="brand">Menu<span>Mind</span></span>
-    <span class="by">by</span>
-    <img src="/menulogo.JPG" alt="menu.ca">
-  </a>
-  <div class="nav-links">
-    <a href="/marketplace-calculator.html" class="nav-link">Marketplace Calculator</a>
-    <a href="/blog/" class="nav-link">Blog</a>
-    <a href="/" class="nav-link">Start Over</a>
-  </div>
-</nav>`;
-}
-
-function footerHtml() {
-  return `
-<footer class="landing-footer">
-  <div class="footer-inner">
-    <span class="footer-brand">Menu<span>Mind</span></span>
-    <span>by menu.ca</span>
-  </div>
-</footer>`;
-}
-
-function ctaHtml() {
-  return `
-<aside class="blog-cta">
-  <h3>Ready to see what AI can do for your restaurant?</h3>
-  <a href="https://worklocal.ca/demo" target="_blank" rel="noopener noreferrer" class="cta-btn">Book Your Free Demo</a>
-  <a href="/" class="cta-secondary">Or try our free Menu Audit →</a>
-</aside>`;
-}
-
-// ── Page templates ────────────────────────────────────────────────────────
-
-function postPage(post, prev, next) {
+function postPage(post, prev, next, lang) {
+  const L = LABELS[lang];
   const title = `${post.title} — MenuMind`;
-  const url = `${SITE_URL}/blog/${post.slug}.html`;
+  const slugPath = lang === 'fr' ? `/fr/blog/${post.slug}.html` : `/blog/${post.slug}.html`;
+  const englishUrl = `/blog/${post.slug}.html`;
+  const frenchUrl = `/fr/blog/${post.slug}.html`;
+  const url = `${SITE_URL}${slugPath}`;
+  const backHref = lang === 'fr' ? '/fr/blog/' : '/blog/';
+
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${L.htmlLang}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -527,20 +331,23 @@ ${post.keywords ? `<meta name="keywords" content="${escapeAttr(post.keywords)}">
 <meta property="og:url" content="${url}">
 <meta property="article:published_time" content="${post.date}">
 
-<style>${SHARED_CSS}${POST_CSS}</style>
+<link rel="alternate" hreflang="en-CA" href="${SITE_URL}${englishUrl}">
+<link rel="alternate" hreflang="fr-CA" href="${SITE_URL}${frenchUrl}">
+
+<style>${BASE_CSS}${POST_CSS}</style>
 </head>
 <body>
-${navHtml()}
+${navHtml({ lang, englishUrl, frenchUrl })}
 
 <main class="post-wrap">
-  <a href="/blog/" class="back-link">← Back to Blog</a>
+  <a href="${backHref}" class="back-link">${L.backToBlog}</a>
 
   <header class="post-header">
     <h1>${escapeHtml(post.title)}</h1>
     <div class="post-meta">
-      <span>${fmtDate(post.date)}</span>
+      <span>${fmtDate(post.date, lang)}</span>
       <span class="dot">·</span>
-      <span>${post.readMin} min read</span>
+      <span>${post.readMin} ${L.minRead}</span>
     </div>
   </header>
 
@@ -548,39 +355,50 @@ ${navHtml()}
 ${post.bodyHtml}
   </article>
 
-  ${ctaHtml()}
+  ${ctaHtml({ lang })}
 
   <nav class="post-nav">
     ${prev
-      ? `<a href="/blog/${prev.slug}.html" class="prev"><div class="label">← Previous</div><div class="title">${escapeHtml(prev.title)}</div></a>`
+      ? `<a href="${lang === 'fr' ? '/fr' : ''}/blog/${prev.slug}.html" class="prev"><div class="label">${lang === 'fr' ? '← Précédent' : '← Previous'}</div><div class="title">${escapeHtml(prev.title)}</div></a>`
       : `<div class="empty"></div>`}
     ${next
-      ? `<a href="/blog/${next.slug}.html" class="next"><div class="label">Next →</div><div class="title">${escapeHtml(next.title)}</div></a>`
+      ? `<a href="${lang === 'fr' ? '/fr' : ''}/blog/${next.slug}.html" class="next"><div class="label">${lang === 'fr' ? 'Suivant →' : 'Next →'}</div><div class="title">${escapeHtml(next.title)}</div></a>`
       : `<div class="empty"></div>`}
   </nav>
 </main>
 
-${footerHtml()}
+${footerHtml({ lang })}
 </body>
 </html>
 `;
 }
 
-function listingPage(posts) {
-  const title = 'Restaurant AI Insights — MenuMind Blog';
-  const desc = 'AI insights and practical guides for independent restaurant owners. Menu engineering, marketplace economics, food waste, staff adoption, privacy law, and more.';
-  const url = `${SITE_URL}/blog/`;
+function listingPage(posts, lang) {
+  const L = LABELS[lang];
+  const isFr = lang === 'fr';
+  const title = isFr ? 'Perspectives IA pour restaurants — Blogue MenuMind' : 'Restaurant AI Insights — MenuMind Blog';
+  const desc = isFr
+    ? 'Conseils et guides pratiques sur l\'IA pour propriétaires de restaurants indépendants au Canada.'
+    : 'AI insights and practical guides for independent restaurant owners. Menu engineering, marketplace economics, food waste, staff adoption, privacy law, and more.';
+  const englishUrl = '/blog/';
+  const frenchUrl = '/fr/blog/';
+  const url = `${SITE_URL}${isFr ? frenchUrl : englishUrl}`;
+  const badge = isFr ? 'Blogue MenuMind' : 'MenuMind Blog';
+  const heroTitle = isFr ? 'IA pour <span>restaurants</span>' : 'Restaurant <span>AI Insights</span>';
+  const heroBlurb = isFr
+    ? 'Guides pratiques pour propriétaires de restaurants indépendants — ingénierie de menu, économie des plateformes, adoption de l\'IA et tactiques concrètes qui améliorent les marges.'
+    : 'Practical guides for independent restaurant owners — menu engineering, marketplace economics, AI adoption, and the real-world plays that move margin.';
 
   const cards = posts.map(p => `
-    <a href="/blog/${p.slug}.html" class="post-card">
-      <div class="meta">${fmtDate(p.date)} · ${p.readMin} min read</div>
+    <a href="${isFr ? '/fr' : ''}/blog/${p.slug}.html" class="post-card">
+      <div class="meta">${fmtDate(p.date, lang)} · ${p.readMin} ${L.minRead}</div>
       <h2>${escapeHtml(p.title)}</h2>
       <p>${escapeHtml(excerpt(p.metaDesc, 120))}</p>
-      <div class="read-more">Read More →</div>
+      <div class="read-more">${L.readMore}</div>
     </a>`).join('\n');
 
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="${L.htmlLang}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -593,15 +411,18 @@ function listingPage(posts) {
 <meta property="og:description" content="${escapeAttr(desc)}">
 <meta property="og:url" content="${url}">
 
-<style>${SHARED_CSS}${LISTING_CSS}</style>
+<link rel="alternate" hreflang="en-CA" href="${SITE_URL}${englishUrl}">
+<link rel="alternate" hreflang="fr-CA" href="${SITE_URL}${frenchUrl}">
+
+<style>${BASE_CSS}${LISTING_CSS}</style>
 </head>
 <body>
-${navHtml()}
+${navHtml({ lang, englishUrl, frenchUrl })}
 
 <section class="blog-hero">
-  <div class="hero-badge">MenuMind Blog</div>
-  <h1>Restaurant <span>AI Insights</span></h1>
-  <p>Practical guides for independent restaurant owners — menu engineering, marketplace economics, AI adoption, and the real-world plays that move margin.</p>
+  <div class="hero-badge">${badge}</div>
+  <h1>${heroTitle}</h1>
+  <p>${heroBlurb}</p>
 </section>
 
 <div class="blog-grid-wrap">
@@ -609,50 +430,68 @@ ${navHtml()}
 ${cards}
   </div>
 
-  ${ctaHtml()}
+  ${ctaHtml({ lang })}
 </div>
 
-${footerHtml()}
+${footerHtml({ lang })}
 </body>
 </html>
 `;
 }
 
-function homepageTeaser(posts) {
-  // Snippet inlined into index.html between the existing sections.
+function homepageTeaser(posts, lang) {
   const top3 = posts.slice(0, 3);
+  const L = LABELS[lang];
+  const isFr = lang === 'fr';
+  const sectionTitle = isFr ? 'Sur le blogue' : 'From Our Blog';
+  const sectionSub = isFr
+    ? 'Conseils et guides pratiques sur l\'IA pour propriétaires de restaurants indépendants.'
+    : 'AI insights and practical guides for independent restaurant owners.';
+  const viewAll = isFr ? 'Voir tous les articles →' : 'View All Posts →';
+  const blogHref = isFr ? '/fr/blog/' : '/blog/';
+  const slugPrefix = isFr ? '/fr/blog/' : '/blog/';
+
   const cards = top3.map(p => `
-      <a href="/blog/${p.slug}.html" class="blog-teaser-card">
-        <div class="blog-teaser-meta">${fmtDate(p.date)} · ${p.readMin} min read</div>
+      <a href="${slugPrefix}${p.slug}.html" class="blog-teaser-card">
+        <div class="blog-teaser-meta">${fmtDate(p.date, lang)} · ${p.readMin} ${L.minRead}</div>
         <h3>${escapeHtml(p.title)}</h3>
         <p>${escapeHtml(excerpt(p.metaDesc, 120))}</p>
-        <span class="blog-teaser-link">Read More →</span>
+        <span class="blog-teaser-link">${L.readMore}</span>
       </a>`).join('');
   return `
-  <!-- ── FROM OUR BLOG ── -->
+  <!-- ── FROM OUR BLOG (auto-generated by scripts/build-blog.js) ── -->
   <section class="blog-teaser-section">
-    <h2>From Our Blog</h2>
-    <p class="blog-teaser-sub">AI insights and practical guides for independent restaurant owners.</p>
+    <h2>${sectionTitle}</h2>
+    <p class="blog-teaser-sub">${sectionSub}</p>
     <div class="blog-teaser-grid">${cards}
     </div>
     <div class="blog-teaser-cta">
-      <a href="/blog/" class="blog-teaser-viewall">View All Posts →</a>
+      <a href="${blogHref}" class="blog-teaser-viewall">${viewAll}</a>
     </div>
   </section>
 `;
 }
 
-// ── Main ──────────────────────────────────────────────────────────────────
+// ── Build one language ────────────────────────────────────────────────────
 
-function main() {
-  const posts = ORDER.map(({ slug, date }) => {
-    const file = path.join(POSTS_DIR, `${slug}.md`);
+function buildLang(lang) {
+  const postsDir = lang === 'fr' ? POSTS_DIR_FR : POSTS_DIR_EN;
+  const outDir = lang === 'fr' ? BLOG_DIR_FR : BLOG_DIR_EN;
+  if (!fs.existsSync(postsDir)) {
+    console.log(`[${lang}] Skipped: no posts directory at ${postsDir}`);
+    return null;
+  }
+
+  const posts = [];
+  for (const { slug, date } of ORDER) {
+    const file = path.join(postsDir, `${slug}.md`);
     if (!fs.existsSync(file)) {
-      throw new Error(`Missing post file: ${file}`);
+      console.log(`[${lang}] Missing ${slug}.md — skipping`);
+      continue;
     }
     const md = fs.readFileSync(file, 'utf8');
-    const parsed = parsePost(md);
-    return {
+    const parsed = parsePost(md, lang);
+    posts.push({
       slug,
       date,
       title: parsed.title,
@@ -661,30 +500,45 @@ function main() {
       body: parsed.body,
       bodyHtml: renderMarkdownBody(parsed.body),
       readMin: readTime(parsed.body),
-    };
-  });
-
-  // Write listing.
-  fs.writeFileSync(path.join(BLOG_DIR, 'index.html'), listingPage(posts), 'utf8');
-  console.log('Wrote blog/index.html');
-
-  // Write per-post pages.
-  for (let i = 0; i < posts.length; i++) {
-    const post = posts[i];
-    // newest first; "previous post" chronologically = older = next in array.
-    const olderPost = posts[i + 1] || null;
-    const newerPost = posts[i - 1] || null;
-    // Use "previous" = older, "next" = newer (matches typical blog UX).
-    const html = postPage(post, olderPost, newerPost);
-    fs.writeFileSync(path.join(BLOG_DIR, `${post.slug}.html`), html, 'utf8');
-    console.log(`Wrote blog/${post.slug}.html`);
+    });
   }
 
-  // Write homepage teaser snippet.
-  fs.writeFileSync(path.join(BLOG_DIR, '_homepage-teaser.html'), homepageTeaser(posts), 'utf8');
-  console.log('Wrote blog/_homepage-teaser.html');
+  if (!posts.length) {
+    console.log(`[${lang}] No posts found — skipping build`);
+    return null;
+  }
 
-  console.log(`\nGenerated ${posts.length} posts.`);
+  if (!fs.existsSync(outDir)) {
+    fs.mkdirSync(outDir, { recursive: true });
+  }
+
+  fs.writeFileSync(path.join(outDir, 'index.html'), listingPage(posts, lang), 'utf8');
+  console.log(`[${lang}] Wrote ${path.relative(ROOT, outDir)}/index.html`);
+
+  for (let i = 0; i < posts.length; i++) {
+    const post = posts[i];
+    const olderPost = posts[i + 1] || null;
+    const newerPost = posts[i - 1] || null;
+    const html = postPage(post, olderPost, newerPost, lang);
+    fs.writeFileSync(path.join(outDir, `${post.slug}.html`), html, 'utf8');
+    console.log(`[${lang}] Wrote ${path.relative(ROOT, outDir)}/${post.slug}.html`);
+  }
+
+  fs.writeFileSync(path.join(outDir, '_homepage-teaser.html'), homepageTeaser(posts, lang), 'utf8');
+  console.log(`[${lang}] Wrote ${path.relative(ROOT, outDir)}/_homepage-teaser.html`);
+
+  return { lang, posts };
 }
 
-main();
+// ── Main ──────────────────────────────────────────────────────────────────
+
+function main() {
+  const en = buildLang('en');
+  const fr = buildLang('fr');
+  const total = (en ? en.posts.length : 0) + (fr ? fr.posts.length : 0);
+  console.log(`\nGenerated ${total} pages total (EN: ${en ? en.posts.length : 0}, FR: ${fr ? fr.posts.length : 0}).`);
+}
+
+if (require.main === module) main();
+
+module.exports = { buildLang, ORDER };
