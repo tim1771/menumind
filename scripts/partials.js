@@ -211,6 +211,7 @@ function navHtml(opts = {}) {
     <img src="/menulogo.JPG" alt="menu.ca">
   </a>
   <div class="nav-links">
+    <a href="${homeHref}" class="nav-link">${L.menuAudit}</a>
     <a href="${calcHref}" class="nav-link">${L.marketplaceCalc}</a>
     <a href="${blogHref}" class="nav-link">${L.blog}</a>
     <span class="lang-switch">
