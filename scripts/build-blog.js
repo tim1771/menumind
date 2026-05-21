@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const {
   SITE_URL,
+  ORG_ID,
   BASE_CSS,
   LABELS,
   escapeHtml,
@@ -14,6 +15,7 @@ const {
   navHtml,
   footerHtml,
   ctaHtml,
+  seoMeta,
 } = require('./partials');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -315,25 +317,45 @@ function postPage(post, prev, next, lang) {
   const url = `${SITE_URL}${slugPath}`;
   const backHref = lang === 'fr' ? '/fr/blog/' : '/blog/';
 
+  const blogPostingLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": post.title,
+    "description": post.metaDesc,
+    "datePublished": post.date,
+    "dateModified": post.date,
+    "author": { "@type": "Organization", "@id": ORG_ID, "name": "MenuMind" },
+    "publisher": {
+      "@type": "Organization",
+      "@id": ORG_ID,
+      "name": "MenuMind",
+      "logo": { "@type": "ImageObject", "url": `${SITE_URL}/menulogo.JPG` },
+    },
+    "mainEntityOfPage": { "@type": "WebPage", "@id": url },
+    "url": url,
+    "inLanguage": lang === 'fr' ? 'fr-CA' : 'en-CA',
+    "keywords": post.keywords || undefined,
+  };
+
+  const head = seoMeta({
+    title,
+    description: post.metaDesc,
+    canonical: url,
+    lang,
+    englishUrl,
+    frenchUrl,
+    ogType: 'article',
+    publishedTime: post.date,
+    jsonLd: blogPostingLd,
+    extraHead: post.keywords ? `<meta name="keywords" content="${escapeAttr(post.keywords)}">` : '',
+  });
+
   return `<!DOCTYPE html>
 <html lang="${L.htmlLang}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${escapeHtml(title)}</title>
-<meta name="description" content="${escapeAttr(post.metaDesc)}">
-${post.keywords ? `<meta name="keywords" content="${escapeAttr(post.keywords)}">` : ''}
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23dc2626'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-weight='800' font-size='20' fill='white'%3EM%3C/text%3E%3C/svg%3E">
-
-<meta property="og:type" content="article">
-<meta property="og:title" content="${escapeAttr(post.title)}">
-<meta property="og:description" content="${escapeAttr(post.metaDesc)}">
-<meta property="og:url" content="${url}">
-<meta property="article:published_time" content="${post.date}">
-
-<link rel="alternate" hreflang="en-CA" href="${SITE_URL}${englishUrl}">
-<link rel="alternate" hreflang="fr-CA" href="${SITE_URL}${frenchUrl}">
-
+${head}
 <style>${BASE_CSS}${POST_CSS}</style>
 </head>
 <body>
@@ -350,6 +372,8 @@ ${navHtml({ lang, englishUrl, frenchUrl })}
       <span>${post.readMin} ${L.minRead}</span>
     </div>
   </header>
+
+  <p class="post-summary">${escapeHtml(post.metaDesc)}</p>
 
   <article class="post-content">
 ${post.bodyHtml}
@@ -397,23 +421,32 @@ function listingPage(posts, lang) {
       <div class="read-more">${L.readMore}</div>
     </a>`).join('\n');
 
+  const collectionLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": title,
+    "description": desc,
+    "url": url,
+    "publisher": { "@id": ORG_ID },
+    "inLanguage": lang === 'fr' ? 'fr-CA' : 'en-CA',
+  };
+
+  const head = seoMeta({
+    title,
+    description: desc,
+    canonical: url,
+    lang,
+    englishUrl,
+    frenchUrl,
+    jsonLd: collectionLd,
+  });
+
   return `<!DOCTYPE html>
 <html lang="${L.htmlLang}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${escapeHtml(title)}</title>
-<meta name="description" content="${escapeAttr(desc)}">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23dc2626'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-weight='800' font-size='20' fill='white'%3EM%3C/text%3E%3C/svg%3E">
-
-<meta property="og:type" content="website">
-<meta property="og:title" content="${escapeAttr(title)}">
-<meta property="og:description" content="${escapeAttr(desc)}">
-<meta property="og:url" content="${url}">
-
-<link rel="alternate" hreflang="en-CA" href="${SITE_URL}${englishUrl}">
-<link rel="alternate" hreflang="fr-CA" href="${SITE_URL}${frenchUrl}">
-
+${head}
 <style>${BASE_CSS}${LISTING_CSS}</style>
 </head>
 <body>

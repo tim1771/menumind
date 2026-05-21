@@ -24,7 +24,7 @@ What matters is the output quality. Modern AI language models produce caption dr
 
 ## The Posting Consistency Problem — Solved
 
-Research from Sprout Social found that restaurants posting three or more times per week on Instagram see significantly higher engagement rates than those posting sporadically. The issue was never creativity — it was sustainability. Week one, you're excited. Week three, you forgot. Week six, your last post is from Valentine's Day.
+Research from [Sprout Social](https://sproutsocial.com/insights/social-media-statistics/) found that restaurants posting three or more times per week on Instagram see significantly higher engagement rates than those posting sporadically. The issue was never creativity — it was sustainability. Week one, you're excited. Week three, you forgot. Week six, your last post is from Valentine's Day.
 
 AI solves this by making the planning separate from the doing. You batch-plan content on a slow Monday, and the posts go out on their own all week. The mental load disappears. You stop thinking about social media at 11 PM because it's already handled.
 

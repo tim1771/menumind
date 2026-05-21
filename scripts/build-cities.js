@@ -5,7 +5,7 @@
 
 const fs = require('fs');
 const path = require('path');
-const { SITE_URL, BASE_CSS, navHtml, footerHtml, ctaHtml, escapeHtml, escapeAttr } = require('./partials');
+const { SITE_URL, ORG_ID, BASE_CSS, navHtml, footerHtml, ctaHtml, escapeHtml, escapeAttr, seoMeta } = require('./partials');
 
 const ROOT = path.resolve(__dirname, '..');
 const OUT_DIR = path.join(ROOT, 'audit');
@@ -151,7 +151,8 @@ function cityPage(city) {
   const description = `Free AI-powered menu audit and marketplace cost calculator built for independent restaurants in ${city.name}, ${city.province}. Get pricing, item-mix, and design recommendations in 60 seconds.`;
   const url = `${SITE_URL}/audit/${city.slug}.html`;
 
-  // Light JSON-LD for the city. Type WebPage with about → City. Keeps payload small.
+  // WebPage schema with about → City. Publisher references the canonical
+  // Organization node by @id so the graph stays unified across pages.
   const ld = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -164,11 +165,7 @@ function cityPage(city) {
       "name": city.name,
       "containedInPlace": { "@type": "AdministrativeArea", "name": city.province + ', Canada' },
     },
-    "publisher": {
-      "@type": "Organization",
-      "name": "MenuMind",
-      "url": SITE_URL,
-    },
+    "publisher": { "@id": ORG_ID },
   };
 
   const cuisineList = city.cuisines.map(c => `<li>${escapeHtml(c)}</li>`).join('');
@@ -206,24 +203,22 @@ ${ctaHtml({ lang: 'en' })}
 </div>
 `;
 
+  const head = seoMeta({
+    title,
+    description,
+    canonical: url,
+    lang: 'en',
+    englishUrl: `/audit/${city.slug}.html`,
+    frenchUrl: null,
+    jsonLd: ld,
+  });
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${escapeHtml(title)}</title>
-<meta name="description" content="${escapeAttr(description)}">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23dc2626'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-weight='800' font-size='20' fill='white'%3EM%3C/text%3E%3C/svg%3E">
-
-<meta property="og:type" content="website">
-<meta property="og:title" content="${escapeAttr(title)}">
-<meta property="og:description" content="${escapeAttr(description)}">
-<meta property="og:url" content="${url}">
-
-<link rel="canonical" href="${url}">
-
-<script type="application/ld+json">${JSON.stringify(ld)}</script>
-
+${head}
 <style>${BASE_CSS}${CITY_CSS}</style>
 </head>
 <body>
@@ -295,19 +290,32 @@ function buildIndex(cities) {
     .post-card .read-more { color: var(--accent); font-weight: 600; font-size: 14px; }
   `;
 
+  const hubLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": title,
+    "description": description,
+    "url": url,
+    "publisher": { "@id": ORG_ID },
+    "inLanguage": "en-CA",
+  };
+
+  const head = seoMeta({
+    title,
+    description,
+    canonical: url,
+    lang: 'en',
+    englishUrl: '/audit/',
+    frenchUrl: null,
+    jsonLd: hubLd,
+  });
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${escapeHtml(title)}</title>
-<meta name="description" content="${escapeAttr(description)}">
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23dc2626'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-weight='800' font-size='20' fill='white'%3EM%3C/text%3E%3C/svg%3E">
-<meta property="og:type" content="website">
-<meta property="og:title" content="${escapeAttr(title)}">
-<meta property="og:description" content="${escapeAttr(description)}">
-<meta property="og:url" content="${url}">
-<link rel="canonical" href="${url}">
+${head}
 <style>${BASE_CSS}${CITY_CSS}${indexCss}</style>
 </head>
 <body>

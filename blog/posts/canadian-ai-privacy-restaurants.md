@@ -16,7 +16,7 @@ This guide covers what you actually need to do — in plain language, without th
 
 ## PIPEDA Applies to Your AI Tools
 
-PIPEDA — the Personal Information Protection and Electronic Documents Act — is Canada's federal privacy law, and it applies to every private-sector business that collects personal information in the course of commercial activity. That includes your restaurant.
+[PIPEDA](https://www.priv.gc.ca/en/privacy-topics/privacy-laws-in-canada/the-personal-information-protection-and-electronic-documents-act-pipeda/) — the Personal Information Protection and Electronic Documents Act — is Canada's federal privacy law, and it applies to every private-sector business that collects personal information in the course of commercial activity. That includes your restaurant.
 
 Personal information is broader than most people think. It's not just credit card numbers. It's names, email addresses, phone numbers, dietary restrictions, reservation history, order preferences, and anything else that can identify a specific person. If your AI chatbot asks "Do you have any allergies?" and stores the answer tied to a reservation name, that's personal information under PIPEDA.
 
@@ -40,7 +40,7 @@ The safest approach: only collect what you need for the specific service the cus
 
 ## Quebec Restaurants: Extra Rules Apply
 
-If you operate in Quebec, you're subject to Quebec's Law 25, which went into full effect in 2024 and adds requirements beyond federal PIPEDA. The most relevant for restaurants using AI is the automated decision-making provision.
+If you operate in Quebec, you're subject to [Quebec's Law 25](https://www.quebec.ca/en/government/ministeres-et-organismes/cai/law-25), which went into full effect in 2024 and adds requirements beyond federal PIPEDA. The most relevant for restaurants using AI is the automated decision-making provision.
 
 If your AI tool makes decisions that affect customers — such as dynamically pricing menu items, prioritizing reservation slots, or deciding which customers receive promotional offers — Quebec law requires you to inform customers that an automated system is involved and give them the right to have a human review the decision.
 

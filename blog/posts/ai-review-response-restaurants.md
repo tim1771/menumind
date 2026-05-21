@@ -6,7 +6,7 @@
 
 ---
 
-There's a number that should keep every restaurant owner up at night: 88 percent of consumers say they're more likely to visit a business that responds to all of its reviews — positive and negative — according to BrightLocal's annual consumer survey. And yet the majority of independent restaurants respond to fewer than half of their reviews, and many don't respond at all.
+There's a number that should keep every restaurant owner up at night: 88 percent of consumers say they're more likely to visit a business that responds to all of its reviews — positive and negative — according to [BrightLocal's annual consumer survey](https://www.brightlocal.com/research/local-consumer-review-survey/). And yet the majority of independent restaurants respond to fewer than half of their reviews, and many don't respond at all.
 
 It's not that owners don't care. It's that writing a thoughtful, professional response to a three-star review at 11 PM after a double shift feels impossible. So the reviews pile up unanswered, and every unanswered review is a small signal to potential customers that nobody's paying attention.
 
@@ -24,7 +24,7 @@ For negative reviews, it takes closer to two minutes because you'll want to revi
 
 ## Why This Matters for Your Google Ranking
 
-Beyond customer perception, review responses directly influence your local search visibility. Google's own documentation confirms that responding to reviews is a factor in local search ranking. Restaurants that consistently respond to reviews rank higher in "near me" searches than comparable restaurants that don't.
+Beyond customer perception, review responses directly influence your local search visibility. [Google's own documentation](https://support.google.com/business/answer/7091) confirms that responding to reviews is a factor in local search ranking. Restaurants that consistently respond to reviews rank higher in "near me" searches than comparable restaurants that don't.
 
 The logic makes sense from Google's perspective: a business that actively engages with customer feedback is more likely to be a quality, operating business than one with radio silence. It's a trust signal, and Google rewards it.
 

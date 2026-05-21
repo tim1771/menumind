@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About MenuMind</title>
+  <meta name="description" content="MenuMind is a free AI-powered restaurant toolkit built by Menu.ca, Canada's online ordering platform for independent restaurants. Built to help independents compete with chains and marketplaces." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23dc2626'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-weight='800' font-size='20' fill='white'%3EM%3C/text%3E%3C/svg%3E" />
+
+  <link rel="canonical" href="https://menumindx.netlify.app/about.html" />
+  <link rel="alternate" hreflang="en-CA" href="https://menumindx.netlify.app/about.html" />
+  <link rel="alternate" hreflang="fr-CA" href="https://menumindx.netlify.app/fr/about.html" />
+  <link rel="alternate" hreflang="x-default" href="https://menumindx.netlify.app/about.html" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="About MenuMind" />
+  <meta property="og:description" content="MenuMind is a free AI-powered restaurant toolkit built by Menu.ca, Canada's online ordering platform for independent restaurants." />
+  <meta property="og:url" content="https://menumindx.netlify.app/about.html" />
+  <meta property="og:image" content="https://menumindx.netlify.app/og-image.svg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="en_CA" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="About MenuMind" />
+  <meta name="twitter:description" content="A free AI-powered restaurant toolkit built by Menu.ca for independent Canadian restaurants." />
+  <meta name="twitter:image" content="https://menumindx.netlify.app/og-image.svg" />
+
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@type": "AboutPage",
+    "name": "About MenuMind",
+    "description": "MenuMind is a free AI-powered restaurant toolkit built by Menu.ca, Canada's online ordering platform for independent restaurants.",
+    "url": "https://menumindx.netlify.app/about.html",
+    "mainEntity": { "@id": "https://menumindx.netlify.app/#organization" },
+    "publisher": { "@id": "https://menumindx.netlify.app/#organization" },
+    "inLanguage": "en-CA"
+  }</script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #242836;
+      --border: #2e3345;
+      --text: #e8eaed;
+      --text-dim: #9aa0b0;
+      --accent: #f59e0b;
+      --accent-hover: #d97706;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(145deg, #0f1117 0%, #111827 30%, #0f1729 60%, #0c1a2e 100%);
+      background-attachment: fixed;
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    a { color: var(--accent); }
+
+    nav.site-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 32px;
+      border-bottom: 1px solid rgba(245,158,11,0.1);
+      background: rgba(15,17,23,0.85);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      text-decoration: none;
+    }
+    .logo img { height: 28px; width: auto; }
+    .logo .brand { color: var(--text); }
+    .logo .brand span { color: var(--accent); }
+    .logo .by { font-size: 11px; font-weight: 400; color: var(--text-dim); }
+    nav .nav-links { display: flex; gap: 24px; align-items: center; }
+    nav a.nav-link {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    nav a.nav-link:hover { color: var(--text); }
+    nav .lang-switch {
+      color: var(--text-dim);
+      font-size: 12px;
+      font-weight: 600;
+      padding-left: 8px;
+      border-left: 1px solid var(--border);
+    }
+    nav .lang-switch a { color: var(--text-dim); text-decoration: none; }
+    nav .lang-switch a.active { color: var(--accent); }
+
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 64px 24px 96px;
+    }
+    .page-badge {
+      display: inline-block;
+      padding: 5px 16px;
+      border-radius: 20px;
+      border: 1px solid rgba(245,158,11,0.4);
+      background: rgba(245,158,11,0.08);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 20px;
+    }
+    h1 {
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 28px;
+    }
+    h2 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: 40px;
+      margin-bottom: 14px;
+    }
+    p {
+      font-size: 17px;
+      line-height: 1.75;
+      color: #d8dae0;
+      margin-bottom: 20px;
+    }
+    p.lead {
+      font-size: 18px;
+      color: var(--text);
+    }
+    ul.feature-list {
+      list-style: none;
+      padding: 0;
+      margin: 16px 0 24px;
+    }
+    ul.feature-list li {
+      padding-left: 24px;
+      position: relative;
+      margin-bottom: 14px;
+      font-size: 16px;
+      color: #d8dae0;
+      line-height: 1.6;
+    }
+    ul.feature-list li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .contact-card {
+      background: linear-gradient(135deg, rgba(245,158,11,0.10), rgba(245,158,11,0.03));
+      border: 1px solid rgba(245,158,11,0.3);
+      border-radius: 14px;
+      padding: 28px;
+      margin-top: 48px;
+      text-align: center;
+    }
+    .contact-card h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .contact-card a.contact-btn {
+      display: inline-block;
+      background: linear-gradient(110deg, #f59e0b 0%, #ef4444 100%);
+      color: #fff;
+      font-weight: 700;
+      padding: 12px 28px;
+      border-radius: 10px;
+      text-decoration: none;
+      margin-top: 6px;
+    }
+
+    footer.site-footer { border-top: 1px solid var(--border); padding: 20px 32px; margin-top: 60px; }
+    footer .footer-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+    footer .footer-brand { font-weight: 700; font-size: 15px; color: var(--text); }
+    footer .footer-brand span { color: var(--accent); }
+
+    @media (max-width: 640px) {
+      nav.site-nav { padding: 12px 16px; }
+      main { padding: 40px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <a href="/" class="logo">
+    <span class="brand">Menu<span>Mind</span></span>
+    <span class="by">by</span>
+    <img src="/menulogo.JPG" alt="menu.ca">
+  </a>
+  <div class="nav-links">
+    <a href="/" class="nav-link">Menu Audit</a>
+    <a href="/marketplace-calculator.html" class="nav-link">Marketplace Calculator</a>
+    <a href="/blog/" class="nav-link">Blog</a>
+    <a href="/about.html" class="nav-link" style="color: var(--accent);">About</a>
+    <span class="lang-switch">
+      <a href="/about.html" class="active">EN</a>
+      <span style="opacity:0.4; padding: 0 4px;">|</span>
+      <a href="/fr/about.html">FR</a>
+    </span>
+  </div>
+</nav>
+
+<main>
+  <div class="page-badge">About</div>
+  <h1>About MenuMind</h1>
+
+  <p class="lead">MenuMind is a free suite of AI-powered tools built specifically for independent restaurant owners in Canada. It is developed and maintained by <a href="https://menu.ca">Menu.ca</a>, a Canadian company that has been building online ordering systems for restaurants since 2006.</p>
+
+  <h2>What MenuMind offers today</h2>
+  <ul class="feature-list">
+    <li>A free <a href="/">AI-powered menu audit</a> that classifies every item using menu engineering principles (Stars, Plowhorses, Puzzles, Dogs), recommends pricing adjustments, rewrites menu descriptions, and provides design psychology tips.</li>
+    <li>A <a href="/marketplace-calculator.html">marketplace cost calculator</a> that shows restaurant owners exactly what third-party delivery platforms (Uber Eats, DoorDash, Skip The Dishes) cost them compared to direct ordering.</li>
+    <li>A <a href="/blog/">blog</a> with practical, jargon-free guides on using AI in restaurant operations — from social media automation to food waste reduction to Canadian privacy compliance.</li>
+  </ul>
+
+  <h2>Why it's free</h2>
+  <p>MenuMind is free because it's part of Menu.ca's mission to help independent restaurants compete with chains and marketplace platforms. Restaurant owners who want a full online ordering system, branded website, or managed AI implementation can connect with the Menu.ca team directly.</p>
+
+  <div class="contact-card">
+    <h3>Need a full ordering system or managed AI rollout?</h3>
+    <p style="margin-bottom: 16px;">Talk to the Menu.ca team. They handle the implementation so you can focus on the restaurant.</p>
+    <a href="https://menu.ca/contact.php" target="_blank" rel="noopener noreferrer" class="contact-btn">Book a free consultation with the Menu.ca team</a>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span class="footer-brand">Menu<span>Mind</span></span>
+    <span>by menu.ca</span>
+  </div>
+</footer>
+
+</body>
+</html>

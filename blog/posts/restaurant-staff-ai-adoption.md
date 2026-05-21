@@ -18,7 +18,7 @@ Before you can solve resistance, you need to respect it. Restaurant workers resi
 
 They've seen "game-changing" tools come and go. The tablet ordering system that crashed during Friday rush. The scheduling app that nobody updated. The inventory scanner that took longer than counting by hand. Every failed tech rollout makes the next one harder to sell.
 
-They're afraid it will replace them. This fear is legitimate and widespread. A 2024 survey by the Canadian Federation of Independent Business found that employee concern about job displacement was the top barrier to AI adoption in small businesses. If your dishwasher hears "we're bringing in AI" and thinks "they're going to fire me," no amount of training will fix that until you address the fear directly.
+They're afraid it will replace them. This fear is legitimate and widespread. A 2024 survey by the [Canadian Federation of Independent Business](https://www.cfib-fcei.ca/) found that employee concern about job displacement was the top barrier to AI adoption in small businesses. If your dishwasher hears "we're bringing in AI" and thinks "they're going to fire me," no amount of training will fix that until you address the fear directly.
 
 They don't have time to learn something new. Restaurant work is physically demanding, fast-paced, and unforgiving. Asking someone to learn a new system during service is like asking a pilot to read the manual during takeoff. The timing and context of training matters enormously.
 

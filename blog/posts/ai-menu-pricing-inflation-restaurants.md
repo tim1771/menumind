@@ -52,7 +52,7 @@ A few things help here, and AI tools are starting to assist with each of them.
 
 Two factors make Canadian menu repricing more delicate than the US equivalent in 2026.
 
-First, Canadian consumers have been hit harder by food inflation than US consumers over the last three years, and they know it. Statistics Canada's food CPI numbers have been a regular news topic, which means your customers are price-sensitive in a way they weren't pre-2022. Repricing has to be done thoughtfully because the customer's awareness of grocery costs is high.
+First, Canadian consumers have been hit harder by food inflation than US consumers over the last three years, and they know it. [Statistics Canada's food CPI numbers](https://www150.statcan.gc.ca/t1/tbl1/en/tv.action?pid=1810000401) have been a regular news topic, which means your customers are price-sensitive in a way they weren't pre-2022. Repricing has to be done thoughtfully because the customer's awareness of grocery costs is high.
 
 Second, provincial minimum wage increases have been steady. Ontario's general minimum wage moves annually. Quebec, BC, and Alberta have all bumped their floors recently. Your labour cost percentage has been climbing whether you noticed or not, and that increase has to come out of menu pricing eventually. AI tools can model labour cost into your per-item margin if you give it your average wage and labour hours per service.
 

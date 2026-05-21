@@ -7,16 +7,51 @@
   <meta name="description" content="Arrêtez de perdre de l'argent à cause d'un menu mal conçu et des frais des plateformes. Obtenez un audit de menu propulsé par l'IA et voyez exactement combien Uber Eats vous coûte — gratuit, en moins d'une minute." />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23dc2626'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-family='Arial,sans-serif' font-weight='800' font-size='20' fill='white'%3EM%3C/text%3E%3C/svg%3E" />
 
+  <link rel="canonical" href="https://menumindx.netlify.app/fr/" />
+
   <!-- Open Graph -->
   <meta property="og:title" content="MenuMind — Outils IA gratuits pour restaurants" />
   <meta property="og:description" content="Arrêtez de perdre de l'argent à cause d'un menu mal conçu et des frais des plateformes. Audit de menu par IA gratuit et calculateur de coûts des plateformes pour restaurants indépendants." />
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://menumindx.netlify.app/fr/" />
+  <meta property="og:image" content="https://menumindx.netlify.app/og-image.svg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
   <meta property="og:locale" content="fr_CA" />
 
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="MenuMind — Outils IA gratuits pour restaurants" />
+  <meta name="twitter:description" content="Audit de menu IA gratuit + calculateur de coûts des plateformes pour restaurants indépendants au Canada." />
+  <meta name="twitter:image" content="https://menumindx.netlify.app/og-image.svg" />
+
   <!-- hreflang -->
-  <link rel="alternate" hreflang="en-CA" href="/" />
-  <link rel="alternate" hreflang="fr-CA" href="/fr/" />
-  <link rel="alternate" hreflang="x-default" href="/" />
+  <link rel="alternate" hreflang="en-CA" href="https://menumindx.netlify.app/" />
+  <link rel="alternate" hreflang="fr-CA" href="https://menumindx.netlify.app/fr/" />
+  <link rel="alternate" hreflang="x-default" href="https://menumindx.netlify.app/" />
+
+  <script type="application/ld+json">{
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://menumindx.netlify.app/#organization",
+        "name": "MenuMind",
+        "description": "MenuMind est une trousse d'outils d'IA gratuite pour restaurants, conçue par Menu.ca — la plateforme canadienne de commande en ligne pour restaurants indépendants.",
+        "url": "https://menumindx.netlify.app",
+        "logo": "https://menumindx.netlify.app/menulogo.JPG",
+        "parentOrganization": { "@type": "Organization", "name": "Menu.ca", "url": "https://menu.ca" }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://menumindx.netlify.app/#website",
+        "name": "MenuMind",
+        "url": "https://menumindx.netlify.app",
+        "description": "Outils IA gratuits pour restaurants indépendants — audits de menu, calculateurs de plateformes, guides pratiques.",
+        "publisher": { "@id": "https://menumindx.netlify.app/#organization" },
+        "inLanguage": ["en-CA", "fr-CA"]
+      }
+    ]
+  }</script>
 
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -189,6 +224,14 @@
       gap: 48px;
       margin-top: 56px;
       flex-wrap: wrap;
+    }
+    .entity-def {
+      max-width: 580px;
+      margin: 40px auto 0;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-dim);
+      opacity: 0.75;
     }
     .stat { text-align: center; }
     .stat-num {
@@ -1215,7 +1258,8 @@
   <div class="logo"><span class="brand">Menu<span>Mind</span></span> <span class="by">par</span> <img src="/menulogo.JPG" alt="menu.ca"></div>
   <div style="display:flex; gap:24px; align-items:center;">
     <a href="/fr/marketplace-calculator.html">Calculateur plateformes</a>
-    <a href="/blog/">Blogue</a>
+    <a href="/fr/blog/">Blogue</a>
+    <a href="/fr/about.html">À propos</a>
     <a href="#" onclick="resetApp(); return false;">Recommencer</a>
     <span style="color: var(--text-dim); font-size: 13px;">
       <a href="/index.html" style="color: var(--text-dim);">EN</a>
@@ -1259,6 +1303,8 @@
           <div class="stat-label">Du téléversement à l'audit complet</div>
         </div>
       </div>
+
+      <p class="entity-def">MenuMind est une trousse d'outils d'IA gratuite pour propriétaires de restaurants indépendants au Canada, conçue par Menu.ca — offrant des audits d'ingénierie de menu, une analyse des coûts des plateformes et des guides pratiques pour concurrencer sans dépenser en consultants ou agences.</p>
     </div>
   </section>
 

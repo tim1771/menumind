@@ -4,6 +4,9 @@
 
 const SITE_URL = 'https://menumindx.netlify.app';
 const MENU_CA_CONTACT = 'https://menu.ca/contact.php';
+const OG_IMAGE_URL = `${SITE_URL}/og-image.svg`;
+const ORG_ID = `${SITE_URL}/#organization`;
+const SITE_ID = `${SITE_URL}/#website`;
 
 function escapeHtml(s) {
   if (s == null) return '';
@@ -156,6 +159,19 @@ const BASE_CSS = `
     text-decoration: none;
   }
   .blog-cta .cta-secondary:hover { color: var(--accent); }
+
+  /* AEO lead paragraph — first line of every blog post, the snippet most
+     answer engines extract */
+  .post-summary {
+    font-size: 1.1em;
+    line-height: 1.6;
+    color: #c8cad0;
+    padding: 14px 18px;
+    border-left: 3px solid var(--accent);
+    background: rgba(245,158,11,0.04);
+    border-radius: 4px;
+    margin-bottom: 32px;
+  }
 `;
 
 // Localized link labels — both languages defined in one place.
@@ -165,6 +181,7 @@ const LABELS = {
     menuAudit: 'Menu Audit',
     marketplaceCalc: 'Marketplace Calculator',
     blog: 'Blog',
+    about: 'About',
     backToBlog: '← Back to Blog',
     readMore: 'Read More →',
     minRead: 'min read',
@@ -178,6 +195,7 @@ const LABELS = {
     menuAudit: 'Audit du menu',
     marketplaceCalc: 'Calculateur de plateformes',
     blog: 'Blogue',
+    about: 'À propos',
     backToBlog: '← Retour au blogue',
     readMore: 'Lire la suite →',
     minRead: 'min de lecture',
@@ -200,6 +218,7 @@ function navHtml(opts = {}) {
   const homeHref = isFr ? '/fr/' : '/';
   const calcHref = isFr ? '/fr/marketplace-calculator.html' : '/marketplace-calculator.html';
   const blogHref = isFr ? '/fr/blog/' : '/blog/';
+  const aboutHref = isFr ? '/fr/about.html' : '/about.html';
   const englishUrl = opts.englishUrl || '/';
   const frenchUrl = opts.frenchUrl || '/fr/';
 
@@ -214,6 +233,7 @@ function navHtml(opts = {}) {
     <a href="${homeHref}" class="nav-link">${L.menuAudit}</a>
     <a href="${calcHref}" class="nav-link">${L.marketplaceCalc}</a>
     <a href="${blogHref}" class="nav-link">${L.blog}</a>
+    <a href="${aboutHref}" class="nav-link">${L.about}</a>
     <span class="lang-switch">
       <a href="${englishUrl}" class="${lang === 'en' ? 'active' : ''}">EN</a>
       <span>|</span>
@@ -222,6 +242,84 @@ function navHtml(opts = {}) {
   </div>
 </nav>`;
 }
+
+// Builds the meta + JSON-LD head block for a generated page. Always returns
+// a fragment ready to drop inside <head>. Lets the build script stay focused
+// on page-specific bits.
+//
+//   opts.title          — page <title> (will be set verbatim)
+//   opts.description    — meta description
+//   opts.canonical      — absolute canonical URL
+//   opts.lang           — 'en' | 'fr'
+//   opts.englishUrl     — absolute or root-relative English-version URL
+//   opts.frenchUrl      — absolute or root-relative French-version URL
+//   opts.ogType         — defaults to 'website'
+//   opts.image          — absolute image URL, defaults to OG_IMAGE_URL
+//   opts.jsonLd         — extra schema.org object(s) appended to a @graph
+//   opts.extraHead      — raw HTML appended at the end
+function seoMeta(opts = {}) {
+  const ogType = opts.ogType || 'website';
+  const image = opts.image || OG_IMAGE_URL;
+  const lang = opts.lang === 'fr' ? 'fr' : 'en';
+  const englishAbs = opts.englishUrl
+    ? (opts.englishUrl.startsWith('http') ? opts.englishUrl : SITE_URL + opts.englishUrl)
+    : null;
+  const frenchAbs = opts.frenchUrl
+    ? (opts.frenchUrl.startsWith('http') ? opts.frenchUrl : SITE_URL + opts.frenchUrl)
+    : null;
+
+  const parts = [
+    `<title>${escapeHtml(opts.title || '')}</title>`,
+    `<meta name="description" content="${escapeAttr(opts.description || '')}">`,
+    `<link rel="icon" type="image/svg+xml" href="${FAVICON_HREF}">`,
+    opts.canonical ? `<link rel="canonical" href="${escapeAttr(opts.canonical)}">` : '',
+    englishAbs ? `<link rel="alternate" hreflang="en-CA" href="${escapeAttr(englishAbs)}">` : '',
+    frenchAbs ? `<link rel="alternate" hreflang="fr-CA" href="${escapeAttr(frenchAbs)}">` : '',
+    englishAbs ? `<link rel="alternate" hreflang="x-default" href="${escapeAttr(englishAbs)}">` : '',
+    `<meta property="og:type" content="${ogType}">`,
+    `<meta property="og:title" content="${escapeAttr(opts.title || '')}">`,
+    `<meta property="og:description" content="${escapeAttr(opts.description || '')}">`,
+    opts.canonical ? `<meta property="og:url" content="${escapeAttr(opts.canonical)}">` : '',
+    `<meta property="og:image" content="${escapeAttr(image)}">`,
+    `<meta property="og:image:width" content="1200">`,
+    `<meta property="og:image:height" content="630">`,
+    `<meta property="og:locale" content="${lang === 'fr' ? 'fr_CA' : 'en_CA'}">`,
+    `<meta name="twitter:card" content="summary_large_image">`,
+    `<meta name="twitter:title" content="${escapeAttr(opts.title || '')}">`,
+    `<meta name="twitter:description" content="${escapeAttr(opts.description || '')}">`,
+    `<meta name="twitter:image" content="${escapeAttr(image)}">`,
+  ];
+
+  if (opts.publishedTime) parts.push(`<meta property="article:published_time" content="${escapeAttr(opts.publishedTime)}">`);
+
+  if (opts.jsonLd) {
+    const items = Array.isArray(opts.jsonLd) ? opts.jsonLd : [opts.jsonLd];
+    for (const item of items) {
+      parts.push(`<script type="application/ld+json">${JSON.stringify(item)}</script>`);
+    }
+  }
+
+  if (opts.extraHead) parts.push(opts.extraHead);
+
+  return parts.filter(Boolean).join('\n');
+}
+
+// JSON-LD building blocks reused across the site.
+const ORGANIZATION_LD = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": ORG_ID,
+  "name": "MenuMind",
+  "description": "MenuMind is a free AI-powered restaurant toolkit built by Menu.ca, Canada's online ordering platform for independent restaurants. It offers menu engineering audits, marketplace cost analysis, and practical AI guides for restaurant owners.",
+  "url": SITE_URL,
+  "logo": `${SITE_URL}/menulogo.JPG`,
+  "parentOrganization": {
+    "@type": "Organization",
+    "name": "Menu.ca",
+    "url": "https://menu.ca",
+  },
+  "sameAs": [],
+};
 
 function footerHtml(opts = {}) {
   const lang = opts.lang === 'fr' ? 'fr' : 'en';
@@ -282,13 +380,18 @@ ${footerHtml({ lang })}
 module.exports = {
   SITE_URL,
   MENU_CA_CONTACT,
+  OG_IMAGE_URL,
+  ORG_ID,
+  SITE_ID,
   FAVICON_HREF,
   BASE_CSS,
   LABELS,
+  ORGANIZATION_LD,
   escapeHtml,
   escapeAttr,
   navHtml,
   footerHtml,
   ctaHtml,
   pageShell,
+  seoMeta,
 };

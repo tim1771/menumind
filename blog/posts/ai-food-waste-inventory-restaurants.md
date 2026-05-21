@@ -32,7 +32,7 @@ Not all food waste is created equal, and AI addresses each type differently.
 
 ## The Numbers That Make Owners Pay Attention
 
-A 2024 report from the National Zero Waste Council estimated that Canadian food service businesses collectively waste over $10 billion annually in food. For an independent operator, the unit economics are what matter: cutting waste from 10 percent of food cost to 5 percent on a $300,000 annual food spend saves $15,000. That's a new piece of equipment. That's a raise for your sous chef. That's the margin difference between a breakeven month and a profitable one.
+A 2024 report from the [National Zero Waste Council](https://nzwc.ca/) estimated that Canadian food service businesses collectively waste over $10 billion annually in food. For an independent operator, the unit economics are what matter: cutting waste from 10 percent of food cost to 5 percent on a $300,000 annual food spend saves $15,000. That's a new piece of equipment. That's a raise for your sous chef. That's the margin difference between a breakeven month and a profitable one.
 
 The technology cost is minimal compared to the savings. Most AI-powered inventory tools for independent restaurants run between $100 and $300 per month. The ROI math works out in the first month for most operators if the waste reduction is even modest.
 
