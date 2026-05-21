@@ -1146,7 +1146,7 @@
       }
       nav, .hero, .steps-indicator, .error-msg, .btn-row,
       .loading-overlay, .drop-zone, .upload-tabs, #photoUpload, #textUpload,
-      #landingPage {
+      #landingPage, .post-audit-section {
         display: none !important;
       }
       #appContainer { display: block !important; }
@@ -1545,6 +1545,36 @@ Ribeye Steak - $28.99
       <span>Menu<span class="accent">Mind</span> Audit Report</span>
     </div>
     <div id="resultsContainer"></div>
+
+    <!-- Post-audit blog teaser: peak engagement, keep them on the site. Hidden in print. -->
+    <section class="blog-teaser-section post-audit-section" style="padding: 56px 0 32px; border-top: 1px solid var(--border); margin-top: 48px;">
+      <h2 style="text-align:center; font-size: 22px; font-weight: 700; margin-bottom: 6px;">While you're here</h2>
+      <p class="blog-teaser-sub" style="margin-bottom: 32px;">Quick reads on what most operators tackle right after a menu audit.</p>
+      <div class="blog-teaser-grid">
+        <a href="/blog/ai-food-waste-inventory-restaurants.html" class="blog-teaser-card">
+          <div class="blog-teaser-meta">5 min read</div>
+          <h3>Your Restaurant Throws Away $30,000 a Year in Food. AI Can Cut That in Half.</h3>
+          <p>Canadian restaurants lose 8–12% of food costs to waste. AI-powered inventory tools cut that number — here's how.</p>
+          <span class="blog-teaser-link">Read More →</span>
+        </a>
+        <a href="/blog/ai-menu-pricing-inflation-restaurants.html" class="blog-teaser-card">
+          <div class="blog-teaser-meta">6 min read</div>
+          <h3>Your Menu Prices Are From 2023. Here's How AI Repricing Catches Up Without Scaring Customers.</h3>
+          <p>AI-driven dynamic-but-careful price adjustment in a Canadian inflation context. The mechanic, not the buzzword.</p>
+          <span class="blog-teaser-link">Read More →</span>
+        </a>
+        <a href="/blog/ai-review-response-restaurants.html" class="blog-teaser-card">
+          <div class="blog-teaser-meta">5 min read</div>
+          <h3>Respond to Every Google Review in Under 2 Minutes — Without Sounding Like a Robot</h3>
+          <p>Higher rankings, more bookings, less burnout. The workflow most operators ignore — and shouldn't.</p>
+          <span class="blog-teaser-link">Read More →</span>
+        </a>
+      </div>
+      <div class="blog-teaser-cta" style="margin-top: 32px;">
+        <a href="/blog/" class="blog-teaser-viewall">View All Posts →</a>
+      </div>
+    </section>
+
     <div class="btn-row" style="margin-top: 40px;">
       <button class="btn btn-secondary" onclick="resetApp()">Start New Audit</button>
       <button class="btn btn-primary" onclick="exportPDF()">

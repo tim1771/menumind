@@ -1147,7 +1147,7 @@
       }
       nav, .hero, .steps-indicator, .error-msg, .btn-row,
       .loading-overlay, .drop-zone, .upload-tabs, #photoUpload, #textUpload,
-      #landingPage {
+      #landingPage, .post-audit-section {
         display: none !important;
       }
       #appContainer { display: block !important; }
@@ -1546,6 +1546,36 @@ Ribeye Steak - $28.99
       <span>Menu<span class="accent">Mind</span> Audit Report</span>
     </div>
     <div id="resultsContainer"></div>
+
+    <!-- Post-audit blog teaser (FR) -->
+    <section class="blog-teaser-section post-audit-section" style="padding: 56px 0 32px; border-top: 1px solid var(--border); margin-top: 48px;">
+      <h2 style="text-align:center; font-size: 22px; font-weight: 700; margin-bottom: 6px;">Pendant que vous êtes ici</h2>
+      <p class="blog-teaser-sub" style="margin-bottom: 32px;">Lectures rapides sur ce que la plupart des opérateurs attaquent juste après un audit.</p>
+      <div class="blog-teaser-grid">
+        <a href="/fr/blog/ai-food-waste-inventory-restaurants.html" class="blog-teaser-card">
+          <div class="blog-teaser-meta">5 min de lecture</div>
+          <h3>Votre restaurant jette 30 000 $ de nourriture par année. L'IA peut couper ça en deux.</h3>
+          <p>Les restaurants canadiens perdent 8–12 % du coût des aliments en gaspillage. Voici comment l'IA d'inventaire réduit ce chiffre.</p>
+          <span class="blog-teaser-link">Lire la suite →</span>
+        </a>
+        <a href="/fr/blog/restaurant-staff-ai-adoption.html" class="blog-teaser-card">
+          <div class="blog-teaser-meta">6 min de lecture</div>
+          <h3>Votre personnel de cuisine déteste les nouvelles technos. Voici comment les faire adopter l'IA quand même.</h3>
+          <p>L'adoption de l'IA échoue quand on saute le volet humain. Une approche de gestion du changement qui fonctionne en cuisine.</p>
+          <span class="blog-teaser-link">Lire la suite →</span>
+        </a>
+        <a href="/fr/blog/ai-review-response-restaurants.html" class="blog-teaser-card">
+          <div class="blog-teaser-meta">5 min de lecture</div>
+          <h3>Répondez à tous vos avis Google en moins de 2 minutes — sans avoir l'air d'un robot.</h3>
+          <p>Meilleur classement, plus de réservations, moins d'épuisement. Le flux que la plupart ignorent — à tort.</p>
+          <span class="blog-teaser-link">Lire la suite →</span>
+        </a>
+      </div>
+      <div class="blog-teaser-cta" style="margin-top: 32px;">
+        <a href="/fr/blog/" class="blog-teaser-viewall">Voir tous les articles →</a>
+      </div>
+    </section>
+
     <div class="btn-row" style="margin-top: 40px;">
       <button class="btn btn-secondary" onclick="resetApp()">Start New Audit</button>
       <button class="btn btn-primary" onclick="exportPDF()">

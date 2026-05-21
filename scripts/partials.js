@@ -3,7 +3,7 @@
 // changes, update it here and re-run the build script.
 
 const SITE_URL = 'https://menumindx.netlify.app';
-const WORK_LOCAL_DEMO = 'https://worklocal.ca/demo';
+const MENU_CA_CONTACT = 'https://menu.ca/contact.php';
 
 function escapeHtml(s) {
   if (s == null) return '';
@@ -168,8 +168,8 @@ const LABELS = {
     backToBlog: '← Back to Blog',
     readMore: 'Read More →',
     minRead: 'min read',
-    ctaTitle: 'Ready to see what AI can do for your restaurant?',
-    ctaBtn: 'Book Your Free Demo',
+    ctaTitle: 'Want a second pair of eyes on your menu and ordering setup?',
+    ctaBtn: 'Book a free consultation with the Menu.ca team',
     ctaSecondary: 'Or try our free Menu Audit →',
     poweredBy: 'by menu.ca',
   },
@@ -181,8 +181,8 @@ const LABELS = {
     backToBlog: '← Retour au blogue',
     readMore: 'Lire la suite →',
     minRead: 'min de lecture',
-    ctaTitle: 'Prêt à voir ce que l\'IA peut faire pour votre restaurant?',
-    ctaBtn: 'Réservez votre démo gratuite',
+    ctaTitle: 'Vous voulez un deuxième avis sur votre menu et votre infrastructure de commande?',
+    ctaBtn: 'Réservez une consultation gratuite avec l\'équipe Menu.ca',
     ctaSecondary: 'Ou essayez notre audit gratuit →',
     poweredBy: 'par menu.ca',
   },
@@ -242,7 +242,7 @@ function ctaHtml(opts = {}) {
   return `
 <aside class="blog-cta">
   <h3>${L.ctaTitle}</h3>
-  <a href="${WORK_LOCAL_DEMO}" target="_blank" rel="noopener noreferrer" class="cta-btn">${L.ctaBtn}</a>
+  <a href="${MENU_CA_CONTACT}" target="_blank" rel="noopener noreferrer" class="cta-btn">${L.ctaBtn}</a>
   <a href="${auditHref}" class="cta-secondary">${L.ctaSecondary}</a>
 </aside>`;
 }
@@ -281,7 +281,7 @@ ${footerHtml({ lang })}
 
 module.exports = {
   SITE_URL,
-  WORK_LOCAL_DEMO,
+  MENU_CA_CONTACT,
   FAVICON_HREF,
   BASE_CSS,
   LABELS,
